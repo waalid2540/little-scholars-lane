@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="One-on-one GED tutoring for adults in Minneapolis and St. Paul, in person or online, from $20 an hour. First 30 minutes free.">
+<meta name="description" content="Free GED study materials that actually help, plus one-on-one GED tutoring for adults in Minneapolis and St. Paul from $20 an hour.">
 <title>Little Scholars Lane</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Figtree:wght@400;500;600;700&family=Caveat:wght@500;700&display=swap">
 <style>
@@ -129,6 +129,36 @@
   .ba p{font-size:1rem;color:var(--ink-soft)}
   .ba-grade{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-weight:600;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cinnamon)}
 
+  /* study materials */
+  .materials{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .mat-intro{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:start;margin-bottom:40px}
+  @media (max-width:820px){.mat-intro{grid-template-columns:1fr}}
+  .mat-intro h2{font-size:clamp(2rem,4vw,3rem);margin-bottom:14px}
+  .mat-intro p{color:var(--ink-soft);max-width:34rem}
+  .mat-intro p+p{margin-top:10px}
+  .start{background:var(--cinnamon-soft);border-radius:20px;padding:24px 26px}
+  .start h3{font-size:1.4rem;margin-bottom:10px}
+  .start ol{margin:0;padding-left:1.2rem;display:grid;gap:8px;color:var(--ink);font-size:.98rem}
+  .start li b{font-weight:600}
+  .group-label{font-size:.72rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--cinnamon);margin:34px 0 14px;display:flex;align-items:center;gap:12px}
+  .group-label::after{content:"";flex:1;height:1px;background:var(--line)}
+  .res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media (max-width:900px){.res-grid{grid-template-columns:1fr 1fr}}
+  @media (max-width:600px){.res-grid{grid-template-columns:1fr}}
+  .res{background:var(--ground);border-radius:20px;padding:24px;border:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+  .res.pick{background:var(--surface);box-shadow:var(--shadow)}
+  .res .tags{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:var(--pine-soft);color:var(--pine)}
+  .tag.pick{background:var(--cinnamon-soft);color:var(--cinnamon)}
+  .res h3{font-size:1.5rem;margin-top:4px}
+  .res h3 a{text-decoration:none;color:inherit;border-bottom:1px solid var(--line)}
+  .res h3 a:hover{border-color:var(--cinnamon);color:var(--cinnamon)}
+  .res p{color:var(--ink-soft);font-size:.95rem}
+  .res p a{color:var(--cinnamon)}
+  .res .why{color:var(--ink);font-style:italic;font-family:"Cormorant Garamond",Georgia,serif;font-size:1.1rem;border-left:2px solid var(--cinnamon);padding-left:12px}
+  .res .note{font-size:.84rem;color:var(--ink-soft);margin-top:auto;padding-top:10px;border-top:1px dashed var(--line)}
+  .res .note b{font-weight:600;color:var(--ink)}
+
   /* services */
   .services{background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
   .price-note{display:inline-block;background:var(--cinnamon-soft);color:var(--cinnamon);font-weight:600;padding:8px 16px;border-radius:999px;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase}
@@ -187,6 +217,8 @@
 </style>
 </head>
 <body>
+</head>
+<body>
 
 <header class="wrap">
   <nav class="nav" aria-label="Main">
@@ -195,6 +227,7 @@
       Little Scholars Lane
     </a>
     <div class="nav-links">
+      <a href="#materials">Study materials</a>
       <a href="#progress">Results</a>
       <a href="#services">Subjects &amp; prices</a>
       <a href="#how">How it works</a>
@@ -212,7 +245,7 @@
       <p class="lede">One-on-one GED prep for adults in Minneapolis and St. Paul, at the library, at your kitchen table, or online. Patient, flexible, and built around work and family.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#quote">Get a quote</a>
-        <a class="btn btn-ghost" href="#services">See prices from $20/hr</a>
+        <a class="btn btn-ghost" href="#materials">Free study materials</a>
       </div>
       <div class="tiny-facts">
         <span>First 30 minutes free</span>
@@ -290,6 +323,80 @@
     </div>
   </section>
 </main>
+
+<section id="materials" class="materials">
+  <div class="wrap">
+    <div class="mat-intro">
+      <div>
+        <span class="eyebrow">The short list</span>
+        <h2 style="margin-top:14px">Free study materials that actually helped</h2>
+        <p>When I studied for my GED, I went through dozens of websites, apps, and videos before I found the ones that worked. Nobody should have to do that search twice. This is the short list, with a note on what each one is good for and anything to watch out for.</p>
+        <p>Everything here is free to start. Where a site tries to sell you something, I say so.</p>
+      </div>
+      <div class="start">
+        <h3>Never studied before? Start here.</h3>
+        <ol>
+          <li><b>Take one free practice test</b> so you know your starting score. Don’t study first. You want the honest number.</li>
+          <li><b>Pick your weakest subject</b> and watch the Get Sum Math playlist for it, one video a day.</li>
+          <li><b>Book the free 30 minutes</b> below, or join a free Minneapolis class, so someone is checking your work.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="group-label">Aisha’s picks</div>
+    <div class="res-grid">
+      <article class="res pick">
+        <div class="tags"><span class="tag pick">Aisha’s pick</span><span class="tag">Free</span><span class="tag">All 4 subjects</span></div>
+        <h3><a href="https://www.youtube.com/c/GetSumMath" target="_blank" rel="noopener">Get Sum Math</a></h3>
+        <p>YouTube lessons for GED Math, Science, Social Studies, and RLA from a former full-time GED teacher, plus a free website with practice tests and a calculator course at <a href="https://www.getsummath.com/" target="_blank" rel="noopener">getsummath.com</a>.</p>
+        <p class="why">The math videos were the first thing that made sense to me. Short, no fluff, one skill at a time.</p>
+        <p class="note"><b>Best for:</b> math from the ground up, and the TI-30XS calculator.</p>
+      </article>
+      <article class="res pick">
+        <div class="tags"><span class="tag pick">Aisha’s pick</span><span class="tag">Free · sign-up</span><span class="tag">Practice test</span></div>
+        <h3><a href="https://www.passged.com/free-test" target="_blank" rel="noopener">PassGED free practice test</a></h3>
+        <p>A full free GED practice test from Essential Education. You get a score and a list of the specific skills you still need to work on, which is a ready-made study plan.</p>
+        <p class="why">This is the test that showed me where I actually stood, instead of where I guessed I stood.</p>
+        <p class="note"><b>Heads up:</b> you’ll need to create a free account, and the site will offer a paid course afterward. The practice test itself costs nothing.</p>
+      </article>
+      <article class="res pick">
+        <div class="tags"><span class="tag pick">Aisha’s pick</span><span class="tag">Free</span><span class="tag">AI study buddy</span></div>
+        <h3><a href="https://grok.com" target="_blank" rel="noopener">Grok</a> &amp; <a href="https://www.meta.ai" target="_blank" rel="noopener">Muse</a></h3>
+        <p>AI chatbots from xAI and Meta. Paste in a question you got wrong and ask “explain this like I’m new to it,” then ask for three more problems just like it.</p>
+        <p class="why">Having something to ask at 11 p.m. when no one else was awake kept me going.</p>
+        <p class="note"><b>Heads up:</b> they sometimes get math wrong with confidence. Check the answer against Get Sum Math or your calculator before you trust it.</p>
+      </article>
+    </div>
+
+    <div class="group-label">Official &amp; free in Minnesota</div>
+    <div class="res-grid">
+      <article class="res">
+        <div class="tags"><span class="tag">Official</span><span class="tag">Free app</span></div>
+        <h3><a href="https://ged.com" target="_blank" rel="noopener">GED.com</a></h3>
+        <p>The official site. This is where you create your account, see what each test covers, and schedule the real thing at a test center or online. Their <a href="https://www.ged.com/study/ged-mobile-app.html" target="_blank" rel="noopener">GED &amp; Me app</a> has practice questions and an AI math tutor.</p>
+        <p class="note"><b>Heads up:</b> the official full-length practice test, GED Ready, costs money per subject. Take it when you’re close to ready, not on day one.</p>
+      </article>
+      <article class="res">
+        <div class="tags"><span class="tag">Free classes</span><span class="tag">Minneapolis</span></div>
+        <h3><a href="https://ce.mpschools.org/adults/adult-ed/ged-adult-diploma" target="_blank" rel="noopener">Minneapolis Adult Education</a></h3>
+        <p>Free in-person and online GED prep classes through Minneapolis Public Schools, with North and South campuses and day and evening options. You must be 18 or older.</p>
+        <p class="note"><b>Questions:</b> call 612-668-1863. Tutoring here works well alongside a class, not instead of one.</p>
+      </article>
+      <article class="res">
+        <div class="tags"><span class="tag">Free</span><span class="tag">200+ languages</span></div>
+        <h3><a href="https://hotline.mnabe.org/" target="_blank" rel="noopener">Adult Literacy Hotline</a></h3>
+        <p>Minnesota’s statewide line for finding free GED, English, and college-prep classes near you. They can refer you in Spanish, Somali, Hmong, and many other languages.</p>
+        <p class="note"><b>Call</b> 800-222-1990 or <b>text</b> 612-424-1211.</p>
+      </article>
+      <article class="res">
+        <div class="tags"><span class="tag">Free</span><span class="tag">Math &amp; grammar</span></div>
+        <h3><a href="https://www.khanacademy.org" target="_blank" rel="noopener">Khan Academy</a></h3>
+        <p>Not GED-specific, but the best free place to drill a single math skill until it sticks. Search the exact topic, like “adding fractions,” and do the practice set.</p>
+        <p class="note"><b>Best for:</b> extra practice after a Get Sum Math video.</p>
+      </article>
+    </div>
+  </div>
+</section>
 
 <section id="services" class="services">
   <div class="wrap">
