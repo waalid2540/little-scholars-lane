@@ -13,6 +13,7 @@
   function subj(id){ for (var i=0;i<SUBJECTS.length;i++) if (SUBJECTS[i].id===id) return SUBJECTS[i]; return null; }
   function topicOf(s, tid){ for (var i=0;i<s.topics.length;i++) if (s.topics[i].id===tid) return [s.topics[i], i]; return [null,-1]; }
   function doneSet(){ return store.get('done', {}); }
+  window.LSL = {$:$, app:app, store:store, esc:esc, subj:subj, topicOf:topicOf, doneSet:doneSet, attempts:function(){ return store.get('attempts', []); }};
 
   /* ---------- router ---------- */
   function route(){
@@ -21,7 +22,8 @@
     var page = parts[0] || 'home';
     document.querySelectorAll('.nav-links a').forEach(function(a){
       var key = a.getAttribute('data-route');
-      a.classList.toggle('active', key === page || (key==='home' && (page==='quote')));
+      var alias = {cards:'study', formulas:'study', testday:'study', essay:'practice'};
+      a.classList.toggle('active', key === page || key === alias[page]);
     });
     if (quiz.timer) { clearInterval(quiz.timer); quiz.timer = null; }
     if (page === 'home' || page === 'quote') renderHome(page === 'quote');
@@ -29,6 +31,7 @@
     else if (page === 'practice') { if (parts.length === 1) renderPractice(); else renderQuizSetup(parts[1]); }
     else if (page === 'resources') renderResources();
     else if (page === 'help') renderHelp();
+    else if (window.EXTRA && window.EXTRA[page]) window.EXTRA[page](parts.slice(1));
     else renderHome(false);
     if (page !== 'quote') window.scrollTo(0,0);
   }
@@ -53,6 +56,10 @@
         feature('#/practice','Practice tests','Check yourself','Timed or untimed quizzes with instant scoring, explanations for every answer, and a skill breakdown.','Take a practice test'),
         feature('#/resources','Resources','The short list','The free videos, tests, and local classes that actually helped, with notes on what to watch out for.','See the list'),
         feature('#/help','Need help?','Ask anything','Quick answers about the test, registration, and where to start, or send a question straight to Aisha.','Open the chat'),
+        feature('#/plan','Study plan','Know what to do this week','Four questions in, a week-by-week plan out: which lessons, cards, and quizzes, until your test date.','Build a plan'),
+        feature('#/essay','Essay workspace','Write the real thing','Two passages, a 45-minute timer, a place to write, and a self-score against the graders’ rubric.','Practice the essay'),
+        feature('#/cards','Flashcards','Ten minutes on the bus','Formulas, grammar rules, and facts, one card at a time. Misses come back more often.','Open a deck'),
+        feature('#/progress','Progress','See where you stand','Lessons done, practice averages, cards mastered, and a readiness read for each subject.','Check progress'),
       '</div>',
     '</section>',
     window.RESULTS_HTML || '',
@@ -132,6 +139,7 @@
         var n = progressFor(s);
         return '<a class="subject '+s.cls+'" href="#/study/'+s.id+'"><h3>'+s.name+'</h3><div class="meta"><span>'+s.time+'</span><span>'+s.items+'</span></div><p>'+s.overview.split('. ')[0]+'.</p><span class="count">'+s.topics.length+' topics · '+n+' done</span></a>';
       }).join('') + '</div>' +
+      '<div class="tool-row"><a class="tool" href="#/cards"><b>Flashcards</b><span>Terms and formulas, one at a time</span></a><a class="tool" href="#/formulas"><b>Formula sheet</b><span>What you get and what to memorize</span></a><a class="tool" href="#/essay"><b>Essay workspace</b><span>Timed extended response practice</span></a><a class="tool" href="#/testday"><b>Test day</b><span>What to bring, what to expect</span></a></div>' +
       '<div class="card soft" style="margin-top:36px"><h3 style="font-size:1.4rem;margin-bottom:8px">Not sure where to start?</h3><p class="muted">Take a 10-question practice test in each subject first. Then study the subject with the lowest score. Most people start with math, and that is fine too.</p><p style="margin-top:12px"><a class="btn btn-primary btn-sm" href="#/practice">Take a practice test</a></p></div></div>';
   }
   function renderSubject(id){
@@ -180,15 +188,16 @@
     var s = subj(sid); if (!s) return renderPractice();
     var total = QUESTIONS[s.id].length;
     app.innerHTML = '<div class="wrap '+s.cls+'"><div class="page-head" style="padding-bottom:16px"><div class="crumbs"><span><a href="#/practice">Practice tests</a></span><span>'+s.name+'</span></div><h1>'+s.name+' practice</h1><p>'+total+' questions in the bank. Choose how many and whether to use a timer. The timer gives you about the same time per question as the real test.</p></div>' +
-      '<div class="setup"><div class="card"><div class="opt-group"><label class="lbl">How many questions</label><div class="chip-row" id="count"><button class="chip on" data-n="10">10 questions</button><button class="chip" data-n="'+total+'">All '+total+'</button></div></div>' +
+      '<div class="setup"><div class="card"><div class="opt-group"><label class="lbl">How many questions</label><div class="chip-row" id="count"><button class="chip on" data-n="10">10 questions</button><button class="chip" data-n="25">25 questions</button><button class="chip" data-n="'+total+'">All '+total+'</button></div></div>' +
       '<div class="opt-group"><label class="lbl">Timer</label><div class="chip-row" id="timed"><button class="chip on" data-t="0">No timer</button><button class="chip" data-t="1">Timed</button></div></div>' +
       '<div class="opt-group"><label class="lbl">Order</label><div class="chip-row" id="shuffle"><button class="chip on" data-s="1">Shuffle</button><button class="chip" data-s="0">In order</button></div></div>' +
-      '<button class="btn btn-primary" id="start">Start the quiz</button></div>' +
+      '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-primary" id="start">Start the quiz</button><button class="btn btn-ghost" id="mock">Full-length timed mock</button></div></div>' +
       '<div class="card soft"><h3 style="font-size:1.3rem;margin-bottom:10px">Before you start</h3><ul style="margin:0;padding-left:1.1rem;color:var(--ink-soft);display:grid;gap:6px"><li>Have scratch paper. On the real test you get an erasable board.</li><li>Use a calculator for math after question 5, like the real thing.</li><li>Guess if you are unsure. There is no penalty, here or on the GED.</li><li>Read every explanation afterward, especially the ones you got right by luck.</li></ul>' +
       '<p style="margin-top:14px"><a href="#/study/'+s.id+'" class="btn-text">Study '+s.short+' first →</a></p></div></div></div>';
     var opts = {n:10, timed:0, shuffle:1};
     ['count','timed','shuffle'].forEach(function(g){ $('#'+g).addEventListener('click', function(e){ var b = e.target.closest('.chip'); if (!b) return; this.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); if (g==='count') opts.n = +b.dataset.n; if (g==='timed') opts.timed = +b.dataset.t; if (g==='shuffle') opts.shuffle = +b.dataset.s; }); });
     $('#start').addEventListener('click', function(){ startQuiz(s, opts); });
+    $('#mock').addEventListener('click', function(){ startQuiz(s, {n:total, timed:1, shuffle:1}); });
   }
   function startQuiz(s, opts){
     var bank = QUESTIONS[s.id].map(function(q,i){ q._i = i; return q; });
@@ -284,6 +293,10 @@
     {k:['tutor','tutoring','session','meet','aisha','quote','hire','lesson with you'], a:'Tutoring is one-on-one, in person around Minneapolis and St. Paul or online, from $20 an hour. The first 30 minutes are free and there is no commitment. <a href="#/quote">Fill in the quick quote form</a> and I will reply within a business day with a price and some open times.'},
     {k:['retake','failed','fail','didn\'t pass','didnt pass','again'], a:'Not passing a subject is common and not the end. You can retake it; the first two retakes have a short waiting period and the third requires a 60-day wait, so use that time well. Your score report shows which skills were weakest. <a href="#/practice">Practice those here</a> and <a href="#/quote">tell me which subject</a> if you want a focused plan.'},
     {k:['practice test','ged ready','diagnostic','where do i start','where to start','start','begin','first'], a:'Start by finding your real starting point. Take <a href="#/practice">a 10-question quiz here</a> in each subject, or the full free test at <a href="https://www.passged.com/free-test" target="_blank" rel="noopener">PassGED</a>. Then study the lowest subject first. The official <b>GED Ready</b> practice test costs money, so save it for when you are close to passing.'},
+    {k:['plan','study plan','schedule my studying','how should i study','what should i do each week'], a:'Build a plan. <a href="#/plan">The study plan page</a> asks four questions and gives you a week-by-week list of lessons, flashcards, and quizzes until your test date. It saves on this device and shows up on your <a href="#/progress">progress page</a>.'},
+    {k:['flashcard','flashcards','cards','memorize','vocabulary','vocab'], a:'<a href="#/cards">Flashcards are here</a>, one deck per subject. Mark each card got it or not yet, and the misses come back more often. Ten minutes a day is plenty.'},
+    {k:['what to bring','test day','day of the test','id','identification','locker','bring'], a:'Bring a government photo ID that matches your GED account name exactly, plus your confirmation. Everything else goes in a locker. <a href="#/testday">The test day page</a> covers the whole day, including breaks, scratch paper, and when scores post.'},
+    {k:['progress','how am i doing','am i ready','ready'], a:'<a href="#/progress">Your progress page</a> shows lessons done, practice averages, and a readiness read for each subject. As a rule of thumb: averaging 80% or better on the quizzes here means it is time to take the official GED Ready practice test.'},
     {k:['hi','hello','hey','salaam','salam','hola'], a:'Hi! I am the study helper on Little Scholars Lane. Ask me about the GED test, registering, costs, or where to start. If I cannot answer, I will help you send your question to Aisha.'},
     {k:['thank','thanks'], a:'You are welcome. Go get it. And if you want a person in your corner, <a href="#/quote">the quote form is right here</a>.'}
   ];
