@@ -1,0 +1,333 @@
+/* Study guide content for Little Scholars Lane. Written for adults studying for the GED. */
+window.SUBJECTS = [
+{
+  id:'math', name:'Mathematical Reasoning', short:'Math', cls:'s-math',
+  time:'115 minutes', items:'about 46 questions', tools:'On-screen TI-30XS calculator (after the first 5 questions) and a formula sheet',
+  overview:'Math is the subject most people put off, and the one with the most predictable content. About half the test is quantitative (fractions, percents, ratios, geometry, data) and half is algebra (equations, graphs, functions). You do not need to memorize formulas: a formula sheet is on screen the whole time.',
+  facts:[['115 min','Total time, one short break'],['145','Passing score (100 to 200 scale)'],['TI-30XS','On-screen calculator provided'],['Formula sheet','Given to you during the test']],
+  topics:[
+  { id:'fractions', title:'Fractions and decimals', summary:'Add, subtract, multiply, and divide fractions. Switch between fractions, decimals, and percents.',
+    learn:[
+      '<p>A fraction is just a division problem you have not finished yet. <code>3/4</code> means 3 divided by 4, which is 0.75. If you ever freeze on a fraction, type it into the calculator as a division and work with the decimal.</p>',
+      '<h2>Adding and subtracting</h2><p>You need a common denominator (bottom number). Find a number both denominators divide into, rewrite each fraction, then add or subtract the tops only.</p><div class="callout"><b>Shortcut:</b> multiply the two denominators together. It always works, even if it is not the smallest option. 1/4 + 1/6 → use 24 → 6/24 + 4/24 = 10/24 = 5/12.</div>',
+      '<h2>Multiplying and dividing</h2><p>Multiply straight across: tops times tops, bottoms times bottoms. To divide, flip the second fraction and multiply. <code>2/3 ÷ 4/5 = 2/3 × 5/4 = 10/12 = 5/6</code>.</p>',
+      '<h2>Switching forms</h2><table><tr><th>Fraction</th><th>Decimal</th><th>Percent</th></tr><tr><td>1/2</td><td>0.5</td><td>50%</td></tr><tr><td>1/4</td><td>0.25</td><td>25%</td></tr><tr><td>3/4</td><td>0.75</td><td>75%</td></tr><tr><td>1/3</td><td>0.333…</td><td>33.3%</td></tr><tr><td>1/5</td><td>0.2</td><td>20%</td></tr><tr><td>1/8</td><td>0.125</td><td>12.5%</td></tr><tr><td>3/8</td><td>0.375</td><td>37.5%</td></tr></table><p>Memorize this table. It shows up constantly and saves you a minute every time.</p>',
+      '<h2>On the calculator</h2><p>The TI-30XS has a fraction key (<code>n/d</code>). Press it, type the top, arrow down, type the bottom. The <code>◂▸</code> key toggles between fraction and decimal. Practice this before test day so it is automatic.</p>'
+    ],
+    example:{problem:'A recipe needs 3/4 cup of sugar. You want to make half the recipe. How much sugar?', steps:['Half of something means multiply by 1/2.','3/4 × 1/2: multiply across. 3 × 1 = 3 on top, 4 × 2 = 8 on the bottom.','Answer: 3/8 cup.'], answer:'3/8 cup (0.375)'},
+    tryIt:{q:'Add 2/5 + 1/3.', answer:'11/15', explain:'Common denominator 15. 2/5 = 6/15 and 1/3 = 5/15. 6 + 5 = 11, so 11/15. It does not simplify.'}
+  },
+  { id:'percents', title:'Percents, ratios, and proportions', summary:'Discounts, tax, tips, percent change, unit rates, and scaling recipes or maps.',
+    learn:[
+      '<p>Percent means "out of 100." 30% is 30/100, which is 0.30. To find a percent of a number, turn the percent into a decimal and multiply. 30% of 80 = 0.30 × 80 = 24.</p>',
+      '<h2>The three percent questions</h2><ul><li><b>What is 15% of 60?</b> → 0.15 × 60 = 9</li><li><b>9 is what percent of 60?</b> → 9 ÷ 60 = 0.15 = 15%</li><li><b>9 is 15% of what?</b> → 9 ÷ 0.15 = 60</li></ul><p>Notice the pattern: multiply when you know the percent and the whole, divide when you are missing one of them.</p>',
+      '<h2>Percent change</h2><div class="callout"><b>Formula:</b> (new − old) ÷ old, then × 100. A price going from 50 to 62: (62 − 50) ÷ 50 = 0.24 = a 24% increase.</div><p>Always divide by the <em>original</em> number. That is the most common mistake.</p>',
+      '<h2>Ratios and proportions</h2><p>A ratio compares two quantities: 3 cups flour to 2 cups sugar is 3:2. A proportion says two ratios are equal. Set them up as fractions and cross-multiply.</p><p>If 3 cups flour needs 2 cups sugar, how much sugar for 9 cups flour? <code>3/2 = 9/x</code> → 3x = 18 → x = 6.</p>',
+      '<h2>Unit rates</h2><p>"Per" means divide. 180 miles in 3 hours is 180 ÷ 3 = 60 miles per hour. $4.50 for 3 pounds is $1.50 per pound. Unit rates let you compare deals and scale up or down.</p>',
+      '<h2>Simple interest</h2><p>On the formula sheet: <code>I = prt</code>. Interest = principal × rate (as a decimal) × time in years. $2,000 at 4% for 3 years = 2000 × 0.04 × 3 = $240.</p>'
+    ],
+    example:{problem:'A $48 jacket is 25% off. Then 8% sales tax is added. What is the final price?', steps:['Discount: 0.25 × 48 = 12. Sale price 48 − 12 = 36.','Tax on the sale price: 0.08 × 36 = 2.88.','Total: 36 + 2.88 = 38.88.'], answer:'$38.88'},
+    tryIt:{q:'A town grew from 8,000 people to 9,200. What was the percent increase?', answer:'15%', explain:'(9200 − 8000) ÷ 8000 = 1200 ÷ 8000 = 0.15 = 15%.'}
+  },
+  { id:'calculator', title:'The calculator and the formula sheet', summary:'Exactly what the TI-30XS does, and which formulas are handed to you so you stop trying to memorize them.',
+    learn:[
+      '<p>The first five math questions are no-calculator. After that, an on-screen TI-30XS MultiView appears and stays available. You can also bring your own physical TI-30XS to a test center. Practice on a real one or the free online version from the test maker so you are not learning buttons on test day.</p>',
+      '<h2>Keys that matter</h2><ul><li><code>n/d</code> fractions, and <code>◂▸</code> to toggle fraction and decimal</li><li><code>x²</code> square, <code>2nd</code> then <code>x²</code> for square root</li><li><code>^</code> for other powers, like 2^5</li><li><code>(−)</code> for negative numbers. This is different from the minus key. Using the wrong one is a top cause of wrong answers.</li><li><code>( )</code> parentheses. When in doubt, add them.</li><li><code>%</code> is under <code>2nd</code>. Typing 15 then % gives 0.15.</li></ul>',
+      '<h2>The formula sheet gives you</h2><table><tr><th>Shape or idea</th><th>Formula</th></tr><tr><td>Rectangle area</td><td>A = lw</td></tr><tr><td>Triangle area</td><td>A = ½bh</td></tr><tr><td>Circle area / circumference</td><td>A = πr², C = 2πr</td></tr><tr><td>Box volume</td><td>V = lwh</td></tr><tr><td>Cylinder volume</td><td>V = πr²h</td></tr><tr><td>Pythagorean theorem</td><td>a² + b² = c²</td></tr><tr><td>Slope</td><td>m = (y₂ − y₁) ÷ (x₂ − x₁)</td></tr><tr><td>Slope-intercept line</td><td>y = mx + b</td></tr><tr><td>Quadratic formula</td><td>x = (−b ± √(b² − 4ac)) ÷ 2a</td></tr><tr><td>Simple interest</td><td>I = prt</td></tr><tr><td>Distance</td><td>d = rt</td></tr><tr><td>Mean</td><td>sum ÷ count</td></tr></table>',
+      '<div class="callout"><b>What is NOT on the sheet:</b> how to add fractions, percent change, how to solve an equation, or order of operations. Those you learn. Everything in the table above, you look up.</div>'
+    ],
+    example:{problem:'Find the area of a circle with radius 3 inches. Use the formula sheet.', steps:['Sheet says A = πr².','Type: π × 3 x² = on the calculator. Or 3.14 × 9.','Result: about 28.27 square inches.'], answer:'About 28.3 in²'},
+    tryIt:{q:'On the TI-30XS, what is the difference between the (−) key and the − key?', answer:'(−) makes a number negative; − subtracts.', explain:'To compute 5 − (−3) you press 5, −, (−), 3. Mixing them up gives an error or a wrong answer.'}
+  },
+  { id:'algebra', title:'Solving equations and inequalities', summary:'Undo what was done to x, one step at a time. Works for equations, inequalities, and most word problems.',
+    learn:[
+      '<p>An equation is a balance. Whatever you do to one side, do to the other. Your goal is to get the letter alone.</p>',
+      '<h2>The undo order</h2><ol><li>Undo addition or subtraction first.</li><li>Then undo multiplication or division.</li></ol><p><code>3x − 7 = 11</code> → add 7 to both sides → <code>3x = 18</code> → divide by 3 → <code>x = 6</code>. Check: 3(6) − 7 = 11. ✓</p>',
+      '<h2>Letters on both sides</h2><p>Move all the x terms to one side first. <code>5x + 2 = 2x + 14</code> → subtract 2x → <code>3x + 2 = 14</code> → subtract 2 → <code>3x = 12</code> → <code>x = 4</code>.</p>',
+      '<h2>Distributing</h2><p>A number outside parentheses multiplies everything inside. <code>3(x − 4) = 3x − 12</code>. Then combine like terms: <code>3(x − 4) + 2x = 5x − 12</code>.</p>',
+      '<h2>Inequalities</h2><p>Solve exactly like equations with one rule: if you multiply or divide both sides by a <em>negative</em>, flip the sign. <code>2x + 5 > 13</code> → <code>2x > 8</code> → <code>x > 4</code>. On a number line, an open circle at 4 and shade to the right.</p>',
+      '<h2>Plugging in</h2><p>Evaluate means substitute. <code>2x² − 3x</code> when x = −2: <code>2(−2)² − 3(−2) = 2(4) + 6 = 14</code>. Use parentheses around negatives every single time.</p>',
+      '<div class="callout"><b>Test trick:</b> when the answers are numbers, you can plug each answer choice back into the equation and see which one works. Slower, but it never fails.</div>'
+    ],
+    example:{problem:'A phone plan costs $25 a month plus $0.10 per text. Marcus paid $31.50. How many texts did he send?', steps:['Write it: 25 + 0.10t = 31.50.','Subtract 25: 0.10t = 6.50.','Divide by 0.10: t = 65.'], answer:'65 texts'},
+    tryIt:{q:'Solve: 4(x + 2) = 28', answer:'x = 5', explain:'Distribute: 4x + 8 = 28. Subtract 8: 4x = 20. Divide by 4: x = 5.'}
+  },
+  { id:'graphs', title:'Slope, lines, and graphs', summary:'Read a graph, find slope from two points, and know what y = mx + b is telling you.',
+    learn:[
+      '<p>Slope is steepness: rise over run. Positive slope goes up to the right, negative goes down, zero is flat, undefined is vertical.</p>',
+      '<h2>Slope from two points</h2><p>Formula sheet: <code>m = (y₂ − y₁) ÷ (x₂ − x₁)</code>. Points (2, 3) and (6, 11): <code>(11 − 3) ÷ (6 − 2) = 8 ÷ 4 = 2</code>. Subtract in the same order on top and bottom.</p>',
+      '<h2>y = mx + b</h2><p><code>m</code> is the slope. <code>b</code> is the y-intercept, where the line crosses the y-axis (when x = 0). In <code>y = 2x − 3</code>, slope is 2 and the line crosses at (0, −3).</p><p>In a word problem, <code>b</code> is the starting amount and <code>m</code> is the rate of change. A plumber who charges $50 to show up plus $40 an hour: <code>y = 40x + 50</code>.</p>',
+      '<h2>Reading graphs on the test</h2><ul><li>Read the axis labels and units first.</li><li>Find where the line crosses an axis.</li><li>Pick two clear points to compute slope, not points you have to guess.</li><li>"Rate of change" and "slope" mean the same thing.</li></ul>',
+      '<h2>Functions</h2><p>A function is a rule: each input gives exactly one output. <code>f(x) = 3x + 1</code> means "take x, triple it, add 1." <code>f(4) = 13</code>. A table or graph is a function if no x-value repeats with different y-values.</p>'
+    ],
+    example:{problem:'A tank is draining. At 2 minutes it holds 36 gallons; at 5 minutes it holds 27 gallons. What is the rate, and what did it start with?', steps:['Slope: (27 − 36) ÷ (5 − 2) = −9 ÷ 3 = −3 gallons per minute.','Starting amount: go back 2 minutes from 36 at −3 each: 36 + 6 = 42.','Equation: y = −3x + 42.'], answer:'−3 gal/min, started at 42 gallons'},
+    tryIt:{q:'What is the slope of the line through (1, 5) and (4, −1)?', answer:'−2', explain:'(−1 − 5) ÷ (4 − 1) = −6 ÷ 3 = −2. The line falls 2 for every 1 it moves right.'}
+  },
+  { id:'geometry', title:'Geometry: area, perimeter, volume', summary:'Shapes you will see, what the formula sheet gives you, and how to handle composite figures.',
+    learn:[
+      '<p>Perimeter is the distance around (add the sides). Area is the space inside (square units). Volume is the space a 3-D object holds (cubic units). Decide which one the question wants before you touch a formula.</p>',
+      '<h2>Rectangles and triangles</h2><p>Rectangle: <code>A = lw</code>, <code>P = 2l + 2w</code>. Triangle: <code>A = ½bh</code> where the height is the straight-up distance, not the slanted side.</p>',
+      '<h2>Circles</h2><p>Radius is center to edge. Diameter is all the way across (2 × radius). <code>A = πr²</code>, <code>C = 2πr</code>. If the question gives a diameter, halve it first.</p>',
+      '<h2>Pythagorean theorem</h2><p>Right triangles only. <code>a² + b² = c²</code>, where c is the longest side (hypotenuse). Legs 6 and 8: 36 + 64 = 100, so c = 10. Common triples to recognize: 3-4-5, 6-8-10, 5-12-13.</p>',
+      '<h2>Volume</h2><p>Box: <code>V = lwh</code>. Cylinder: <code>V = πr²h</code>. The test often asks how many cubic feet of something fits, or how much a tank holds.</p>',
+      '<h2>Composite shapes</h2><div class="callout"><b>Strategy:</b> break weird shapes into rectangles, triangles, and half-circles. Find each area and add. For an L-shaped room, draw one line to split it into two rectangles.</div>'
+    ],
+    example:{problem:'A rectangular patio is 12 ft by 9 ft. A path 2 ft wide runs around the outside. What is the area of the path?', steps:['Outer rectangle: (12 + 4) × (9 + 4) = 16 × 13 = 208 sq ft. Add 2 ft on each side, so 4 total.','Inner patio: 12 × 9 = 108 sq ft.','Path = 208 − 108 = 100 sq ft.'], answer:'100 square feet'},
+    tryIt:{q:'A ladder leans against a wall. Its base is 5 ft from the wall and it reaches 12 ft up. How long is the ladder?', answer:'13 ft', explain:'5² + 12² = 25 + 144 = 169. √169 = 13. A 5-12-13 triangle.'}
+  },
+  { id:'data', title:'Data, statistics, and probability', summary:'Mean, median, mode, reading charts, and simple probability.',
+    learn:[
+      '<p>The GED loves tables and charts. Most data questions are about reading carefully, then doing one calculation.</p>',
+      '<h2>Mean, median, mode</h2><ul><li><b>Mean</b> (average): add them all, divide by how many.</li><li><b>Median</b>: put them in order, take the middle. With an even count, average the two middle numbers.</li><li><b>Mode</b>: the most common value. There can be none or more than one.</li><li><b>Range</b>: biggest minus smallest.</li></ul><p>Data 7, 3, 9, 12, 5, 8 → sorted 3, 5, 7, 8, 9, 12. Mean 44 ÷ 6 ≈ 7.33. Median (7 + 8) ÷ 2 = 7.5. No mode. Range 9.</p>',
+      '<h2>Weighted average</h2><p>If 3 tests count once and a final counts twice, multiply each score by its weight, add, and divide by the total weight (5).</p>',
+      '<h2>Probability</h2><p>Probability = favorable outcomes ÷ total outcomes. A bag with 4 red and 6 blue marbles: P(red) = 4/10 = 2/5 = 40%.</p><p>Two independent events in a row: multiply. Flipping heads twice: ½ × ½ = ¼. "Without replacement" means the total shrinks for the second draw.</p>',
+      '<h2>Reading charts</h2><ul><li>Bar and line charts: read the axis scale. Is each gridline 5 or 50?</li><li>Pie charts: slices add to 100%. A percent of a total is a multiplication.</li><li>Box plots: the line inside the box is the median; the box is the middle 50%.</li></ul>'
+    ],
+    example:{problem:'Scores: 82, 91, 76, 91, 85. Find the mean, median, and mode.', steps:['Mean: 82 + 91 + 76 + 91 + 85 = 425. 425 ÷ 5 = 85.','Sorted: 76, 82, 85, 91, 91. Median is the middle: 85.','Mode: 91 appears twice.'], answer:'Mean 85, median 85, mode 91'},
+    tryIt:{q:'A spinner has 8 equal sections numbered 1 to 8. What is the probability of landing on a number greater than 5?', answer:'3/8', explain:'Favorable outcomes: 6, 7, 8 (three of them). 3 out of 8.'}
+  },
+  { id:'word-problems', title:'A plan for word problems', summary:'The four-step routine that turns a paragraph into a math problem you already know how to do.',
+    learn:[
+      '<p>Most GED math is word problems. The math is usually simple; the hard part is figuring out which math. Use the same routine every time.</p>',
+      '<h2>The routine</h2><ol><li><b>Read the last sentence first.</b> That is the actual question. Underline the units they want (dollars, feet, percent, hours).</li><li><b>Pull out the numbers</b> and label them in your own words. "48 = original price, 25% = discount."</li><li><b>Pick the operation</b> from the clue words below.</li><li><b>Check the answer against common sense.</b> A discount should make the price smaller. A speed of 600 mph for a car is wrong.</li></ol>',
+      '<h2>Clue words</h2><table><tr><th>Words</th><th>Usually means</th></tr><tr><td>total, altogether, combined, in all</td><td>add</td></tr><tr><td>difference, how many more, left, remaining</td><td>subtract</td></tr><tr><td>per, each, every, of (with a fraction or percent)</td><td>multiply</td></tr><tr><td>split, shared equally, per (finding a rate)</td><td>divide</td></tr><tr><td>is, equals, will be</td><td>the = sign</td></tr></table>',
+      '<h2>Eliminate answers</h2><p>Before solving, cross out any choice that is the wrong size or the wrong sign. Often two of four choices are impossible, so even a guess is 50/50.</p>',
+      '<div class="callout"><b>Time check:</b> 115 minutes for about 46 questions is roughly 2.5 minutes each. If a problem passes 3 minutes, flag it, pick your best guess, and move on. Come back if time remains.</div>'
+    ],
+    example:{problem:'Fartun earns $18.50 an hour. She worked 32 hours last week and had $96 taken out for taxes. What was her take-home pay?', steps:['Last sentence: take-home pay, in dollars.','Numbers: 18.50 per hour (multiply by hours), 32 hours, 96 taken out (subtract).','18.50 × 32 = 592. 592 − 96 = 496.','Sense check: a bit under $600 for a week of work. Reasonable.'], answer:'$496'},
+    tryIt:{q:'A bus holds 44 people. 187 people signed up for a trip. How many buses are needed?', answer:'5 buses', explain:'187 ÷ 44 = 4.25. You cannot run a quarter of a bus, so round UP to 5. Watch for questions where rounding down leaves people behind.'}
+  }
+  ]
+},
+{
+  id:'rla', name:'Reasoning Through Language Arts', short:'RLA', cls:'s-rla',
+  time:'150 minutes', items:'reading, grammar, and one essay', tools:'A 10-minute break between sections; the essay has its own 45 minutes',
+  overview:'RLA is a reading test more than a writing test. About 75% of the passages are nonfiction: workplace documents, articles, speeches, and historical texts. Questions ask what the text says, what it implies, how it is organized, and how the author supports a claim. The extended response (essay) asks you to decide which of two passages makes the better-supported argument.',
+  facts:[['150 min','Including a 10-minute break'],['45 min','For the extended response essay'],['75%','Of passages are nonfiction'],['145','Passing score']],
+  topics:[
+  { id:'how-rla-works', title:'How the RLA test works', summary:'The three parts, the timing, and what the questions actually look like.',
+    learn:[
+      '<p>The test has three sections. Section 1 (about 35 minutes) is reading and grammar. Section 2 is the 45-minute extended response. Then a 10-minute break. Section 3 (about 60 minutes) is more reading and grammar.</p>',
+      '<h2>Question types you will see</h2><ul><li><b>Multiple choice</b> about a passage: main idea, details, inference, vocabulary in context, author purpose, structure.</li><li><b>Drag-and-drop</b>: put events in order or sort evidence under claims.</li><li><b>Drop-down grammar</b>: a passage with blanks; pick the correctly written version of a sentence.</li><li><b>Extended response</b>: one essay comparing two passages.</li></ul>',
+      '<h2>What the passages are</h2><p>Mostly nonfiction: workplace memos, instructions, news features, speeches, and founding documents. Some literary fiction. Passages run 400 to 900 words, and several questions attach to each one.</p>',
+      '<div class="callout"><b>Key mindset:</b> every answer is in the passage. You are not being tested on what you know about the topic. You are being tested on whether you can find and use what the text says.</div>'
+    ],
+    example:{problem:'A question says: "Which detail from the passage best supports the idea that the new schedule improved morale?" What are you being asked to do?', steps:['Find the claim: the new schedule improved morale.','Go back to the passage and look for a sentence that shows morale improving (fewer complaints, more volunteers, a quote from a happy worker).','Pick the answer choice that quotes or paraphrases that exact sentence. Ignore choices that are true but about something else.'], answer:'Locate evidence in the text for a specific claim'},
+    tryIt:{q:'True or false: you should read all the questions before reading the passage.', answer:'Mostly true, for the first question at least.', explain:'Glancing at the questions tells you what to look for. Many test-takers read the first question, then the passage, then answer all questions by going back to the text.'}
+  },
+  { id:'main-idea', title:'Main idea, details, and inference', summary:'The three question types that make up most of the reading score, and how to tell them apart.',
+    learn:[
+      '<h2>Main idea</h2><p>The main idea is what the whole passage is about, in one sentence. It is usually stated near the beginning or end. Test it: does every paragraph connect to it? If an answer choice only covers one paragraph, it is a detail, not the main idea.</p>',
+      '<h2>Supporting details</h2><p>Detail questions ask about something the text says directly. Find the key word from the question in the passage and read the sentences around it. The correct answer will match the text in meaning, often in different words.</p>',
+      '<h2>Inference</h2><p>An inference is something the passage strongly suggests but does not say outright. "The author would most likely agree that…" or "What can be concluded…" are inference questions.</p><div class="callout"><b>Rule:</b> a good inference is a small step from the text, not a leap. If you need outside knowledge or a big assumption to reach the answer, it is wrong.</div>',
+      '<h2>Vocabulary in context</h2><p>When asked what a word means "as used in paragraph 3," cover the word, read the sentence, and ask what word would fit. Many test words have several meanings; the passage tells you which one.</p>',
+      '<h2>Author purpose and tone</h2><p>Why did the author write this? To inform, persuade, entertain, or explain? Tone words: objective, critical, hopeful, urgent, nostalgic. Look at word choice. "Reckless" and "bold" describe the same action with opposite tones.</p>'
+    ],
+    example:{problem:'A paragraph says: "By March, the volunteer sign-up sheet had three pages of names. In January it had been blank." What inference is supported?', steps:['The text gives two facts: blank in January, three pages in March.','Small step: volunteer interest grew a lot between January and March.','Too big a step: "the organization will succeed" or "the director is popular." The text does not say that.'], answer:'Volunteer interest increased significantly over those months'},
+    tryIt:{q:'A passage says a manager "finally" approved the request. What does the word "finally" suggest about the process?', answer:'It took a long time or was delayed.', explain:'"Finally" implies waiting. The author is hinting the approval was slow, without stating it directly.'}
+  },
+  { id:'structure-argument', title:'Text structure and arguments', summary:'How writers organize ideas, and how to judge whether a claim is actually supported.',
+    learn:[
+      '<h2>Common structures</h2><table><tr><th>Structure</th><th>Signal words</th></tr><tr><td>Chronological</td><td>first, then, later, in 1998, finally</td></tr><tr><td>Cause and effect</td><td>because, as a result, therefore, led to</td></tr><tr><td>Compare and contrast</td><td>similarly, however, on the other hand, unlike</td></tr><tr><td>Problem and solution</td><td>the issue, one approach, to address this</td></tr><tr><td>Claim and evidence</td><td>studies show, for example, data from, according to</td></tr></table>',
+      '<h2>Claim, evidence, reasoning</h2><p>A <b>claim</b> is what the author wants you to believe. <b>Evidence</b> is facts, data, examples, or expert quotes. <b>Reasoning</b> explains why the evidence proves the claim. Strong arguments have all three.</p>',
+      '<h2>Judging evidence</h2><p>Stronger: statistics with a source, named studies, specific examples, acknowledged counterarguments. Weaker: one person\'s story, emotional language, vague words like "many people say," no sources.</p><div class="callout"><b>This is the heart of the essay.</b> The extended response asks which passage is "better supported." That means which one has stronger evidence, not which one you agree with.</div>',
+      '<h2>Fact vs. opinion</h2><p>A fact can be checked. An opinion is a judgment. "The bridge was built in 1932" is a fact. "The bridge is the city\'s most beautiful landmark" is an opinion, even if many agree.</p>'
+    ],
+    example:{problem:'Passage A says uniforms reduce bullying and cites a district study showing suspensions dropped 36%. Passage B says uniforms stifle creativity and quotes one parent. Which is better supported?', steps:['Passage A has a named study with a specific number.','Passage B has one anecdote and no data.','Better supported: Passage A, regardless of your own view on uniforms.'], answer:'Passage A, because it uses specific, sourced evidence'},
+    tryIt:{q:'Which is stronger evidence: "Everyone knows night shifts are unhealthy" or "A 2019 study of 4,000 nurses linked night shifts to a 12% higher rate of sleep disorders"?', answer:'The 2019 study.', explain:'It is specific, measurable, and sourced. "Everyone knows" is an appeal to popularity, not evidence.'}
+  },
+  { id:'grammar', title:'Grammar that is actually tested', summary:'Run-ons, fragments, agreement, commas, apostrophes, and homophones. That is most of the grammar score.',
+    learn:[
+      '<p>Grammar questions appear as drop-down menus inside a passage. You pick the version of the sentence that is correct. You do not need to name the rule; you need to hear what is right.</p>',
+      '<h2>Run-ons and fragments</h2><p>A <b>run-on</b> jams two complete sentences together with just a comma or nothing. Fix with a period, a semicolon, or a comma plus a joining word (and, but, so, because).</p><p>Wrong: <em>The bus was late, I missed the meeting.</em> Right: <em>The bus was late, so I missed the meeting.</em></p><p>A <b>fragment</b> is missing a subject or verb. <em>Because the bus was late.</em> is not a sentence.</p>',
+      '<h2>Subject-verb agreement</h2><p>Singular subject, singular verb. The trap is a phrase between them. <em>The box of supplies <b>is</b> on the shelf.</em> The subject is box, not supplies. <em>Each of the workers <b>has</b> a badge.</em> Each is singular.</p>',
+      '<h2>Commas</h2><ul><li>After an opening phrase: <em>After the meeting, we left.</em></li><li>Around extra information: <em>My manager, who started in May, approved it.</em></li><li>Between items in a list.</li><li>Before and, but, so when joining two full sentences.</li><li>NOT between a subject and its verb.</li></ul>',
+      '<h2>Apostrophes</h2><p>Possession or contraction, never plurals. <em>The worker\'s badge</em> (one worker). <em>The workers\' badges</em> (many). <em>It\'s</em> = it is. <em>Its</em> = belonging to it. <em>Two badges</em>, no apostrophe.</p>',
+      '<h2>Homophones</h2><table><tr><th>Word</th><th>Means</th></tr><tr><td>their / there / they\'re</td><td>belonging to them / a place / they are</td></tr><tr><td>your / you\'re</td><td>belonging to you / you are</td></tr><tr><td>to / too / two</td><td>direction / also or excessive / 2</td></tr><tr><td>affect / effect</td><td>verb, to influence / noun, the result</td></tr><tr><td>then / than</td><td>time / comparison</td></tr></table>',
+      '<h2>Transitions</h2><p>Pick the word that matches the logic. Adding a reason: because, since. Contrast: however, although. Result: therefore, as a result. Example: for instance.</p>'
+    ],
+    example:{problem:'Choose the correct sentence: (a) The team of nurses were tired after there shift. (b) The team of nurses was tired after their shift. (c) The team of nurses was tired, after their shift.', steps:['Subject is team (singular), so "was."','Belonging to them is "their."','No comma is needed before "after their shift."'], answer:'(b)'},
+    tryIt:{q:'Fix this run-on: "The printer is broken again, nobody has called the repair service."', answer:'The printer is broken again, but nobody has called the repair service. (Or use a period or semicolon.)', explain:'Two complete sentences need more than a comma between them.'}
+  },
+  { id:'extended-response', title:'The extended response essay', summary:'A template you can use every time, the scoring rubric in plain words, and a 45-minute pacing plan.',
+    learn:[
+      '<p>You get two passages that disagree, and one prompt: decide which position is <b>better supported</b> and explain why using evidence from both texts. You have 45 minutes. The essay counts toward your RLA score; you cannot pass RLA without writing something.</p>',
+      '<h2>What the graders look for</h2><ol><li><b>Analysis and evidence:</b> you picked a side based on the quality of support, and quoted or paraphrased specific evidence from both passages.</li><li><b>Organization and development:</b> a clear claim, body paragraphs that each make one point, transitions, a conclusion.</li><li><b>Clarity and correct English:</b> complete sentences, varied structure, mostly correct grammar. Perfection is not required.</li></ol>',
+      '<h2>Pacing</h2><table><tr><th>Minutes</th><th>Do</th></tr><tr><td>0 to 10</td><td>Read both passages. Mark the strongest evidence in each and the weakest spots.</td></tr><tr><td>10 to 13</td><td>Decide which is better supported. Write your claim in one sentence.</td></tr><tr><td>13 to 38</td><td>Write: intro, 2 or 3 body paragraphs, conclusion.</td></tr><tr><td>38 to 45</td><td>Reread. Fix run-ons, agreement, missing words.</td></tr></table>',
+      '<h2>The template</h2><div class="callout"><b>Intro:</b> Both passages address [topic]. Although [Passage B author] argues [B\'s claim], [Passage A author] presents the better-supported argument because [reason 1] and [reason 2].<br><br><b>Body 1:</b> First, [A] supports the claim with [specific evidence, quoted]. This is convincing because [why it counts as strong evidence].<br><br><b>Body 2:</b> Second, [A] also [second piece of evidence]. In contrast, [B] relies on [weak evidence: opinion, one example, no source], which [why that is weak].<br><br><b>Body 3 (optional):</b> [B] does make a fair point about [concession]. However, [why A still wins].<br><br><b>Conclusion:</b> Because of its [data, sources, logic], [A] is the better-supported argument, even for readers who disagree with it.</div>',
+      '<h2>Things that cost points</h2><ul><li>Writing your own opinion on the topic instead of judging the evidence.</li><li>Only discussing one passage.</li><li>No quotes or specific references to the text.</li><li>One giant paragraph.</li><li>Running out of time with no conclusion. A two-sentence conclusion beats none.</li></ul>'
+    ],
+    example:{problem:'Write an intro sentence for passages about whether a city should ban plastic bags. Passage 1 cites a study on waterway litter; Passage 2 quotes two shoppers who find bans inconvenient.', steps:['Name the topic.','Acknowledge the weaker side briefly.','State which is better supported and give two reasons.'], answer:'Both passages debate a plastic bag ban. Although Passage 2 raises concerns about convenience, Passage 1 presents the better-supported argument because it cites measurable environmental data and addresses the opposing view directly.'},
+    tryIt:{q:'Your prompt asks which passage is better supported. You personally agree with the passage that has weaker evidence. Which one do you argue for?', answer:'The one with stronger evidence.', explain:'The essay scores your analysis of support, not your opinion. Arguing for the better-evidenced side is almost always the higher-scoring move.'}
+  },
+  { id:'rla-strategy', title:'Reading faster on test day', summary:'How to handle long passages, drag-and-drop items, and the clock.',
+    learn:[
+      '<h2>For every passage</h2><ol><li>Read the first question so you know what to hunt for.</li><li>Read the passage once at a steady pace. Do not reread sentences you missed; keep going.</li><li>For each question, go back to the text. Find the lines. Then choose.</li></ol>',
+      '<h2>Eliminating answers</h2><p>Wrong answers on RLA fall into predictable types: too extreme ("always," "never"), true but not in the passage, about the wrong paragraph, or the opposite of what the text says. Cross those out first.</p>',
+      '<h2>Drag-and-drop</h2><p>Sequencing: look for dates and time words. Sorting evidence: ask "which claim does this sentence prove?" for each item. Partial credit is not given, so check every item.</p>',
+      '<h2>Drop-down grammar</h2><p>Read the whole sentence with each option plugged in. Say it in your head. Usually two options are clearly wrong, and you choose between the last two by checking commas and verb agreement.</p>',
+      '<div class="callout"><b>Pace:</b> roughly 1.5 to 2 minutes per question outside the essay. If a passage is dense, answer the detail questions first (they are fastest) and save the inference questions for the end.</div>'
+    ],
+    example:{problem:'You have 20 minutes left in section 3 and 14 questions remaining, including one long passage. What do you do?', steps:['Do the standalone grammar questions first; they take 30 seconds each.','Read the long passage once, answer its detail questions, then its inference questions.','With 2 minutes left, answer every remaining question. There is no penalty for guessing.'], answer:'Fast items first, then the passage, and never leave blanks'},
+    tryIt:{q:'An answer choice says "The author believes all managers are dishonest." The passage criticized one manager. Why is this choice wrong?', answer:'It is too extreme and overgeneralizes.', explain:'"All" is rarely supported. The passage discussed a single case.'}
+  }
+  ]
+},
+{
+  id:'science', name:'Science', short:'Science', cls:'s-science',
+  time:'90 minutes', items:'about 34 questions', tools:'On-screen calculator available for the whole test',
+  overview:'The science test is really a reading-and-data test with science vocabulary. Most questions give you a short passage, a graph, or a table and ask you to interpret it. About 40% is life science, 40% physical science, and 20% earth and space science. You do not need to memorize the periodic table.',
+  facts:[['90 min','No breaks'],['40 / 40 / 20','Life / physical / earth and space'],['Calculator','Available throughout'],['145','Passing score']],
+  topics:[
+  { id:'how-science-works', title:'How the science test works', summary:'What is on it, what is not, and the two skills that earn most of the points.',
+    learn:[
+      '<p>Science questions come with a stimulus: a paragraph, a chart, a diagram, or a description of an experiment. Then one to three questions. The two skills tested most are reading data and understanding how experiments work.</p>',
+      '<h2>Question formats</h2><ul><li>Multiple choice</li><li>Fill in the blank (type a number or word)</li><li>Drag-and-drop (label a diagram, order steps)</li><li>Short answer: two or three sentences explaining or designing an experiment. These are graded, so write something.</li></ul>',
+      '<h2>What you do NOT need</h2><p>Memorized formulas, the periodic table, or chemistry equations beyond balancing basics. If a question needs a formula, it gives it to you.</p>',
+      '<div class="callout"><b>Mindset:</b> when a question seems hard, go back to the chart or passage. The answer is almost always sitting there.</div>'
+    ],
+    example:{problem:'A question gives a table of rainfall by month and asks which month had the greatest increase from the previous month. What do you do?', steps:['Go down the table and subtract each month from the one before it.','Pick the biggest positive difference.','Do not pick the month with the highest rainfall; the question asked about increase.'], answer:'Compare month-to-month differences, not totals'},
+    tryIt:{q:'A short-answer question asks you to describe one way to improve an experiment. You are not sure. What should you write?', answer:'Something specific: larger sample, a control group, repeat trials, keep other variables constant.', explain:'Those four improvements apply to almost any experiment and earn credit. A blank earns nothing.'}
+  },
+  { id:'data', title:'Reading graphs, tables, and experiments', summary:'Independent and dependent variables, controls, and the questions the test asks about every chart.',
+    learn:[
+      '<h2>Variables</h2><ul><li><b>Independent variable:</b> what the scientist changes on purpose. Usually on the x-axis.</li><li><b>Dependent variable:</b> what is measured as a result. Usually on the y-axis.</li><li><b>Controlled variables:</b> everything kept the same so the test is fair.</li><li><b>Control group:</b> the group that does not get the treatment, for comparison.</li></ul><p>Plants given 0, 10, 20, and 30 mL of fertilizer, height measured: fertilizer is independent, height is dependent, the 0 mL group is the control.</p>',
+      '<h2>Hypothesis</h2><p>A testable prediction, often "If… then…". A good hypothesis can be proven wrong. "If plants get more fertilizer, then they will grow taller" is testable. "Plants like fertilizer" is not.</p>',
+      '<h2>Reading a graph</h2><ol><li>Title and axis labels, including units.</li><li>What is the scale? Each gridline might be 2, 10, or 100.</li><li>Trend: increasing, decreasing, flat, or peaking.</li><li>Rate: how much y changes per unit of x. That is slope again.</li></ol>',
+      '<h2>Correlation vs. causation</h2><p>Two things rising together does not prove one causes the other. Ice cream sales and drownings both rise in summer. The test likes answer choices that overclaim causation; be suspicious of them.</p>',
+      '<h2>Valid conclusions</h2><p>A conclusion must stay inside the data. If the experiment tested 3 fertilizer amounts on bean plants, you cannot conclude anything about 50 mL or about trees.</p>'
+    ],
+    example:{problem:'A table shows plant height: week 1, 2 cm; week 2, 4 cm; week 3, 6 cm; week 4, 8 cm. What is the growth rate, and what height do you predict at week 6?', steps:['Height rises 2 cm each week. Rate = 2 cm/week.','Week 4 is 8 cm. Two more weeks at 2 cm each adds 4.','Prediction: 12 cm, assuming the trend continues.'], answer:'2 cm per week; about 12 cm at week 6'},
+    tryIt:{q:'A study finds students who eat breakfast score higher on tests. A news headline says "Breakfast raises test scores." What is wrong with the headline?', answer:'It claims causation from a correlation.', explain:'Other factors (sleep, family routine, income) could explain both. The study did not control for them.'}
+  },
+  { id:'life', title:'Life science essentials', summary:'Cells, photosynthesis, genetics, ecosystems, and the human body at the level the test expects.',
+    learn:[
+      '<h2>Cells</h2><p>All living things are made of cells. The <b>nucleus</b> holds DNA. <b>Mitochondria</b> release energy from food. Plant cells also have <b>chloroplasts</b> (photosynthesis) and a cell wall.</p>',
+      '<h2>Photosynthesis and respiration</h2><p>Photosynthesis (plants): carbon dioxide + water + sunlight → sugar + oxygen. Respiration (all living things): sugar + oxygen → energy + carbon dioxide + water. They are opposites, which is why plants and animals depend on each other.</p>',
+      '<h2>Genetics</h2><p>Genes come in pairs, one from each parent. A <b>dominant</b> allele (capital B) shows up if present. A <b>recessive</b> allele (lowercase b) shows only when paired with another recessive (bb).</p><p>Punnett square for Bb × Bb: BB, Bb, Bb, bb. So 25% BB, 50% Bb, 25% bb. 75% show the dominant trait.</p>',
+      '<h2>Ecosystems</h2><ul><li><b>Producers</b> (plants) make their own food. <b>Consumers</b> eat others. <b>Decomposers</b> break down dead matter.</li><li>Energy flows one direction: sun → producer → herbivore → carnivore. Only about 10% passes to each next level.</li><li>Food webs show many connections. Remove one species and others shift.</li><li>Carrying capacity: the most individuals an environment can support.</li></ul>',
+      '<h2>Evolution and adaptation</h2><p>Natural selection: individuals with helpful traits survive and reproduce more, so those traits become common over generations. It acts on populations, not individuals, and it takes many generations.</p>',
+      '<h2>Human body systems</h2><table><tr><th>System</th><th>Job</th></tr><tr><td>Circulatory</td><td>heart and blood move oxygen and nutrients</td></tr><tr><td>Respiratory</td><td>lungs exchange oxygen and carbon dioxide</td></tr><tr><td>Digestive</td><td>breaks food into nutrients</td></tr><tr><td>Nervous</td><td>brain and nerves send signals</td></tr><tr><td>Immune</td><td>fights infection</td></tr></table><p>Homeostasis: the body keeping conditions steady (temperature, blood sugar). Sweating when hot is homeostasis.</p>'
+    ],
+    example:{problem:'Two brown-eyed parents (both Bb) have a child. What is the chance the child has blue eyes (bb)?', steps:['Set up the Punnett square: B and b across the top, B and b down the side.','Boxes: BB, Bb, Bb, bb.','One of four boxes is bb.'], answer:'25%, or 1 in 4'},
+    tryIt:{q:'In a food chain grass → rabbit → fox, what happens to the fox population if a disease kills most rabbits?', answer:'It decreases.', explain:'Foxes lose their main food source. Less energy flows up the chain, so fewer foxes survive.'}
+  },
+  { id:'physical', title:'Physical science essentials', summary:'Forces, energy, heat, atoms, and chemical reactions, with the handful of formulas the test gives you.',
+    learn:[
+      '<h2>Motion and forces</h2><ul><li>Speed = distance ÷ time. Velocity is speed with a direction. Acceleration is a change in velocity.</li><li>Newton 1: things keep doing what they are doing unless a force acts (inertia).</li><li>Newton 2: <code>F = ma</code>. Force = mass × acceleration. 10 kg × 2 m/s² = 20 newtons.</li><li>Newton 3: every action has an equal and opposite reaction.</li><li>Gravity pulls objects toward each other; on Earth it accelerates things at about 9.8 m/s².</li></ul>',
+      '<h2>Energy</h2><p>Energy is never created or destroyed, only changed in form. Kinetic (moving) ↔ potential (stored, like height or a stretched spring). A ball at the top of a hill has potential energy; rolling down it becomes kinetic. Friction turns some into heat.</p>',
+      '<h2>Heat</h2><p>Heat flows from hot to cold until temperatures match. Conduction (touch), convection (moving fluid), radiation (waves, like sunlight). Temperature measures average particle motion.</p>',
+      '<h2>Matter and atoms</h2><ul><li>Atoms: protons (+) and neutrons in the nucleus, electrons (−) around it. The number of protons decides the element.</li><li>States: solid, liquid, gas. Adding heat moves particles faster and spreads them apart.</li><li>Density = mass ÷ volume. Things sink if they are denser than the liquid.</li><li>Physical change: same substance, new form (ice melting, paper torn). Chemical change: new substance (rust, burning, baking).</li></ul>',
+      '<h2>Chemical reactions</h2><p>Reactants → products. Atoms are rearranged, never lost, so mass is conserved. A balanced equation has the same count of each atom on both sides. <code>2H₂ + O₂ → 2H₂O</code>: 4 hydrogens and 2 oxygens on each side.</p><p>Signs of a chemical change: gas bubbles, color change, temperature change, light.</p>',
+      '<h2>Waves</h2><p>Sound needs a medium (air, water). Light does not. Wavelength and frequency are inverses: shorter wavelength means higher frequency. The electromagnetic spectrum runs from radio (long) to gamma (short), with visible light in the middle.</p>'
+    ],
+    example:{problem:'A 1,200 kg car accelerates at 3 m/s². What force does the engine supply?', steps:['Formula given: F = ma.','1,200 × 3 = 3,600.','Units for force are newtons.'], answer:'3,600 N'},
+    tryIt:{q:'A block has a mass of 40 g and a volume of 50 cm³. Water has a density of 1 g/cm³. Does the block float or sink?', answer:'Floats.', explain:'Density = 40 ÷ 50 = 0.8 g/cm³, which is less than water\'s 1 g/cm³.'}
+  },
+  { id:'earth', title:'Earth and space science essentials', summary:'Weather vs. climate, the water and rock cycles, plate tectonics, seasons, and our place in the solar system.',
+    learn:[
+      '<h2>Weather and climate</h2><p>Weather is today. Climate is the average over decades. Climate change refers to long-term shifts, driven today mostly by greenhouse gases (carbon dioxide, methane) trapping heat.</p>',
+      '<h2>The water cycle</h2><p>Evaporation (liquid to vapor, powered by the sun) → condensation (vapor to clouds) → precipitation (rain, snow) → collection and runoff → repeat. Transpiration is water vapor released by plants.</p>',
+      '<h2>Rocks and Earth\'s layers</h2><ul><li>Layers: crust, mantle, outer core, inner core.</li><li>Igneous rock: cooled magma. Sedimentary: compressed layers (often has fossils). Metamorphic: changed by heat and pressure.</li><li>Fossils in lower layers are older, unless the layers were disturbed.</li></ul>',
+      '<h2>Plate tectonics</h2><p>The crust is broken into plates that move slowly. Where they collide: mountains, earthquakes, volcanoes. Where they pull apart: new crust (mid-ocean ridges). Earthquakes and volcanoes cluster along plate boundaries, like the Pacific "Ring of Fire."</p>',
+      '<h2>Seasons, days, and the Moon</h2><ul><li>Day and night: Earth rotates once every 24 hours.</li><li>Seasons: Earth\'s axis is tilted about 23.5°. The hemisphere tilted toward the sun gets more direct light and longer days. Seasons are NOT caused by distance from the sun.</li><li>Moon phases: the Moon orbits Earth about every 29.5 days; we see different amounts of its lit side.</li><li>Tides: caused mainly by the Moon\'s gravity.</li></ul>',
+      '<h2>The solar system and beyond</h2><p>Eight planets orbit the Sun; inner ones are rocky, outer ones are gas giants. The Sun is a star, powered by nuclear fusion. Stars form in nebulae and, depending on size, end as white dwarfs, neutron stars, or black holes. The universe is expanding, which is evidence for the Big Bang.</p>'
+    ],
+    example:{problem:'It is winter in Minneapolis. What season is it in Buenos Aires, Argentina, and why?', steps:['Minneapolis is in the Northern Hemisphere, tilted away from the Sun in December.','Buenos Aires is in the Southern Hemisphere, tilted toward the Sun at the same time.','Opposite tilt, opposite season.'], answer:'Summer, because the Southern Hemisphere is tilted toward the Sun'},
+    tryIt:{q:'A rock has visible layers and a fossil of a shell. What type of rock is it?', answer:'Sedimentary.', explain:'Layers and fossils form when sediment settles and compresses over time. Igneous and metamorphic rocks rarely preserve fossils.'}
+  }
+  ]
+},
+{
+  id:'social', name:'Social Studies', short:'Social Studies', cls:'s-social',
+  time:'70 minutes', items:'about 35 questions', tools:'On-screen calculator available for the few questions with numbers',
+  overview:'Social studies is the shortest test and, like science, mostly a reading test. Half is civics and government, 20% U.S. history, 15% economics, and 15% geography and the world. You will read excerpts from documents, speeches, and articles, and interpret maps, charts, and political cartoons.',
+  facts:[['70 min','Shortest of the four'],['50%','Civics and government'],['20%','U.S. history'],['145','Passing score']],
+  topics:[
+  { id:'civics', title:'Civics and government', summary:'The Constitution, three branches, checks and balances, the Bill of Rights, and how laws and elections work. Half the test.',
+    learn:[
+      '<h2>Founding ideas</h2><ul><li><b>Declaration of Independence (1776):</b> explains why the colonies broke from Britain. Natural rights: life, liberty, pursuit of happiness. Government gets its power from the consent of the governed.</li><li><b>Constitution (1787):</b> the plan for the federal government. Starts "We the People." Replaced the weak Articles of Confederation.</li><li><b>Bill of Rights (1791):</b> the first 10 amendments, protecting individual rights.</li></ul>',
+      '<h2>Three branches</h2><table><tr><th>Branch</th><th>Who</th><th>Does</th></tr><tr><td>Legislative</td><td>Congress: Senate (100) and House (435)</td><td>Makes laws, controls spending, declares war</td></tr><tr><td>Executive</td><td>President, Vice President, cabinet, agencies</td><td>Enforces laws, commands the military, signs or vetoes bills</td></tr><tr><td>Judicial</td><td>Supreme Court and federal courts</td><td>Interprets laws, decides if they are constitutional</td></tr></table>',
+      '<h2>Checks and balances</h2><p>Each branch can limit the others. President vetoes a bill; Congress can override with a two-thirds vote. Supreme Court can strike down a law (judicial review). Senate confirms judges and treaties. Congress can impeach.</p>',
+      '<h2>Federalism</h2><p>Power is shared between the national government and the states. National: money, military, foreign policy. States: schools, licenses, local police. Shared: taxes, courts, roads.</p>',
+      '<h2>Key amendments</h2><table><tr><th>Amendment</th><th>Protects</th></tr><tr><td>1st</td><td>speech, religion, press, assembly, petition</td></tr><tr><td>2nd</td><td>right to bear arms</td></tr><tr><td>4th</td><td>no unreasonable searches</td></tr><tr><td>5th</td><td>due process, no self-incrimination</td></tr><tr><td>6th</td><td>speedy public trial, a lawyer</td></tr><tr><td>13th</td><td>ended slavery (1865)</td></tr><tr><td>14th</td><td>equal protection, citizenship (1868)</td></tr><tr><td>15th</td><td>vote regardless of race (1870)</td></tr><tr><td>19th</td><td>women\'s right to vote (1920)</td></tr><tr><td>26th</td><td>voting age 18 (1971)</td></tr></table>',
+      '<h2>How a bill becomes law</h2><p>Introduced in the House or Senate → committee → passes one chamber → passes the other → President signs (or vetoes, or Congress overrides). Most bills die in committee.</p>',
+      '<h2>Elections</h2><p>President: chosen by the Electoral College, with electors based on each state\'s congressional seats. Senators: 6-year terms. Representatives: 2-year terms. President: 4-year terms, two-term limit. Political parties, primaries, and interest groups all shape who runs.</p>'
+    ],
+    example:{problem:'Congress passes a bill. The President vetoes it. Is the bill dead?', steps:['A veto sends the bill back to Congress.','Congress can override with a two-thirds vote in both chambers.','If it gets that, the bill becomes law without the President.'], answer:'Not necessarily; Congress can override with a two-thirds vote'},
+    tryIt:{q:'A city passes a law banning a newspaper from printing criticism of the mayor. Which amendment does this violate?', answer:'The First Amendment.', explain:'It protects freedom of the press and speech, including criticism of government.'}
+  },
+  { id:'history', title:'U.S. history in one sitting', summary:'The eras and turning points the test actually asks about, from colonies to the present.',
+    learn:[
+      '<h2>Colonies to a new nation (1600s to 1790s)</h2><p>Thirteen British colonies. Taxes without representation (Stamp Act, tea) led to protest, then war. Revolutionary War 1775 to 1783. Declaration of Independence 1776. Constitution written 1787; George Washington first president 1789.</p>',
+      '<h2>Growth and division (1800s to 1865)</h2><p>Louisiana Purchase doubled the country (1803). Westward expansion, often by forcing Native nations off their land (Trail of Tears). Disputes over whether slavery could expand into new states split the nation. Abraham Lincoln elected 1860; Southern states seceded. Civil War 1861 to 1865. Emancipation Proclamation 1863. Union wins; 13th Amendment ends slavery.</p>',
+      '<h2>Reconstruction and industry (1865 to 1900)</h2><p>14th and 15th Amendments granted citizenship and voting rights to Black men, but Jim Crow laws and segregation followed. Railroads, factories, immigration, and cities boomed. Workers formed unions.</p>',
+      '<h2>Progressive Era and world wars (1900 to 1945)</h2><p>Reforms: food safety, child labor laws, women\'s suffrage (19th Amendment, 1920). World War I 1917 to 1918. The 1920s boom, then the 1929 crash and the Great Depression. Franklin Roosevelt\'s New Deal created Social Security and jobs programs. World War II 1941 to 1945 after Pearl Harbor.</p>',
+      '<h2>Cold War and civil rights (1945 to 1991)</h2><p>Rivalry with the Soviet Union: arms race, Korea, Vietnam, the space race. Civil Rights Movement: Brown v. Board (1954) ended school segregation in law; Montgomery bus boycott; Martin Luther King Jr.; Civil Rights Act 1964; Voting Rights Act 1965. The Soviet Union collapsed in 1991.</p>',
+      '<h2>Recent decades</h2><p>Growth of the internet, the September 11, 2001 attacks and the wars that followed, the 2008 financial crisis, and ongoing debates over immigration, health care, and climate.</p>',
+      '<div class="callout"><b>How history is tested:</b> you will usually get a short excerpt (a speech, a letter, a law) and be asked what it means, who likely wrote it, or what caused or resulted from it. Dates matter less than cause and effect.</div>'
+    ],
+    example:{problem:'An excerpt says: "…that all persons held as slaves within any State… in rebellion against the United States, shall be then, thenceforward, and forever free." What is it, and what did it do?', steps:['Language about freeing slaves in states "in rebellion" points to the Civil War.','This is the Emancipation Proclamation, Lincoln, 1863.','It freed enslaved people in Confederate states; slavery ended everywhere with the 13th Amendment in 1865.'], answer:'The Emancipation Proclamation (1863)'},
+    tryIt:{q:'What was the main cause of the Civil War?', answer:'Conflict over slavery, especially whether it would expand into new territories and states.', explain:'Economic and states\'-rights arguments at the time centered on protecting or limiting slavery.'}
+  },
+  { id:'economics', title:'Economics basics', summary:'Supply and demand, inflation, taxes, budgets, and reading an economic graph.',
+    learn:[
+      '<h2>Supply and demand</h2><ul><li>Demand up, supply same → price rises. (Everyone wants the new phone.)</li><li>Supply up, demand same → price falls. (A huge harvest.)</li><li>Shortage: demand exceeds supply. Surplus: supply exceeds demand.</li><li>Equilibrium: where the supply and demand curves cross; the market price.</li></ul>',
+      '<h2>Big-picture terms</h2><table><tr><th>Term</th><th>Plain meaning</th></tr><tr><td>Inflation</td><td>prices rising, money buys less</td></tr><tr><td>Recession</td><td>economy shrinking for months; unemployment rises</td></tr><tr><td>GDP</td><td>total value of everything a country produces in a year</td></tr><tr><td>Unemployment rate</td><td>percent of people looking for work who cannot find it</td></tr><tr><td>Interest rate</td><td>cost of borrowing; set partly by the Federal Reserve</td></tr><tr><td>Tariff</td><td>tax on imports</td></tr></table>',
+      '<h2>Government and the economy</h2><p>Taxes pay for roads, schools, defense, Social Security. Progressive tax: higher earners pay a higher rate (federal income tax). Regressive: hits lower earners harder as a share of income (sales tax). A budget deficit means spending more than you collect in a year; national debt is the total owed.</p>',
+      '<h2>Economic systems</h2><p>Market economy: prices set by buyers and sellers. Command economy: government decides production. Mixed economy: mostly market with government rules; the U.S. is mixed.</p>',
+      '<h2>Personal finance on the test</h2><p>Simple interest, comparing loans, reading a pay stub, budgeting. Opportunity cost: what you give up when you choose one thing over another. Spending Saturday studying has an opportunity cost of the shift you did not work.</p>'
+    ],
+    example:{problem:'A frost destroys half of Florida\'s orange crop. What happens to the price of orange juice, and why?', steps:['Supply of oranges drops sharply.','Demand stays about the same.','Less supply with the same demand pushes prices up.'], answer:'Price rises because supply fell'},
+    tryIt:{q:'Which tax is regressive: a flat 7% sales tax or a federal income tax with higher rates for higher incomes?', answer:'The sales tax.', explain:'Everyone pays the same 7%, which is a larger share of a low income than a high one.'}
+  },
+  { id:'geography', title:'Geography and the world', summary:'Maps, regions, migration, and the world events most likely to appear.',
+    learn:[
+      '<h2>Reading maps</h2><ul><li>Title, legend (key), compass, scale. Always check the legend first.</li><li>Political maps show borders and cities. Physical maps show mountains, rivers, elevation. Thematic maps show data like population or rainfall by shading.</li><li>Latitude lines run east-west and measure north-south (equator is 0°). Longitude lines run north-south and measure east-west (prime meridian is 0°).</li></ul>',
+      '<h2>Why people move</h2><p>Push factors drive people out: war, famine, persecution, no jobs. Pull factors draw people in: safety, work, family, freedom. Urbanization is the movement from countryside to cities, which happened in the U.S. during industrialization and is happening worldwide now.</p>',
+      '<h2>Humans and environment</h2><p>People adapt to climate (housing, crops) and change it (dams, deforestation, irrigation). Resources are renewable (solar, wind, forests if managed) or nonrenewable (oil, coal, natural gas).</p>',
+      '<h2>World history and events likely to appear</h2><ul><li>Ancient civilizations and early democracy (Athens) and republics (Rome) as roots of U.S. government.</li><li>The Enlightenment: Locke and Montesquieu influenced the Constitution (natural rights, separation of powers).</li><li>Industrial Revolution: factories, cities, new technologies.</li><li>World Wars, the Holocaust, the United Nations (1945).</li><li>Cold War, decolonization, fall of the Berlin Wall (1989).</li><li>Globalization: trade, technology, and migration connecting economies.</li></ul>'
+    ],
+    example:{problem:'A map\'s scale says 1 inch = 50 miles. Two cities are 3.5 inches apart on the map. How far apart are they?', steps:['Multiply map distance by the scale.','3.5 × 50 = 175.'], answer:'175 miles'},
+    tryIt:{q:'A family leaves a country because of civil war and moves to Minnesota where relatives live. Name one push factor and one pull factor.', answer:'Push: civil war. Pull: family already there.', explain:'Push factors are reasons to leave; pull factors are reasons to choose a particular destination.'}
+  },
+  { id:'documents', title:'Reading documents, charts, and cartoons', summary:'Primary vs. secondary sources, point of view, bias, and decoding a political cartoon.',
+    learn:[
+      '<h2>Primary vs. secondary</h2><p>Primary sources come from the time and people involved: letters, speeches, photographs, laws, diaries. Secondary sources explain or analyze them later: textbooks, articles, documentaries. The test asks which is which and which is more reliable for a given question.</p>',
+      '<h2>Point of view and bias</h2><p>Ask: who wrote this, when, and why? A general\'s memoir and a soldier\'s letter describe the same battle differently. Bias shows in loaded words, missing perspectives, and one-sided evidence. Biased does not mean useless; it means read carefully.</p>',
+      '<h2>Political cartoons</h2><ol><li>Identify the people or symbols (eagle = U.S., elephant = Republican, donkey = Democrat, Uncle Sam = the government).</li><li>Read every label and caption.</li><li>Notice exaggeration: what is drawn huge or tiny?</li><li>Ask what the cartoonist wants you to think. Cartoons are arguments, not news.</li></ol>',
+      '<h2>Charts and tables</h2><p>Same rules as science: title, units, scale, trend. Then answer only what the data supports. A chart of unemployment from 2008 to 2012 cannot tell you anything about 2020.</p>',
+      '<div class="callout"><b>Common wrong answer:</b> a statement that is historically true but not supported by the document in front of you. The question is about the document.</div>'
+    ],
+    example:{problem:'You are asked which source best shows what soldiers at Gettysburg experienced: (a) a 2015 history textbook, (b) a letter a soldier wrote home in July 1863, (c) a modern documentary.', steps:['The question asks about the soldiers\' experience.','A letter from a soldier at the time is a primary source and firsthand.','The textbook and documentary are secondary.'], answer:'(b) the soldier\'s letter'},
+    tryIt:{q:'A cartoon shows a giant octopus labeled "Standard Oil" with tentacles wrapped around the Capitol and state houses. What is the cartoonist arguing?', answer:'That the oil monopoly had too much control over government.', explain:'The octopus and the grip on government buildings exaggerate the company\'s reach to criticize its power.'}
+  }
+  ]
+}
+];
+
+/* Curated resources */
+window.RESOURCES = [
+ {name:'Get Sum Math', url:'https://www.youtube.com/c/GetSumMath', site:'https://www.getsummath.com/', subj:['math','science','social','rla'], type:'Videos', pick:true, free:'Free',
+  desc:'YouTube lessons for all four GED subjects from a former full-time GED teacher, plus a free website with practice tests and a calculator course.',
+  why:'The math videos were the first thing that made sense to me. Short, no fluff, one skill at a time.', note:'Best for math from the ground up and the TI-30XS calculator.'},
+ {name:'PassGED free practice test', url:'https://www.passged.com/free-test', subj:['math','science','social','rla'], type:'Practice test', pick:true, free:'Free, sign-up',
+  desc:'A full free GED practice test from Essential Education. You get a score and a list of specific skills to work on.',
+  why:'This is the test that showed me where I actually stood, instead of where I guessed I stood.', note:'Needs a free account, and the site will offer a paid course afterward. The test itself costs nothing.'},
+ {name:'Grok and Muse', url:'https://grok.com', site:'https://www.meta.ai', subj:['math','science','social','rla'], type:'AI helper', pick:true, free:'Free',
+  desc:'AI chatbots from xAI and Meta. Paste a question you got wrong and ask for an explanation like you are new to it, then ask for three more like it.',
+  why:'Having something to ask at 11 p.m. when no one else was awake kept me going.', note:'They sometimes get math wrong with confidence. Check against Get Sum Math or your calculator.'},
+ {name:'GED.com', url:'https://ged.com', subj:['math','science','social','rla'], type:'Official', free:'Free account',
+  desc:'The official site. Create your account, see what each test covers, and schedule the real test at a center or online. The GED and Me app has practice questions and an AI math tutor.',
+  note:'The official practice test, GED Ready, costs money per subject. Take it when you are close, not on day one.'},
+ {name:'Minneapolis Adult Education', url:'https://ce.mpschools.org/adults/adult-ed/ged-adult-diploma', subj:[], type:'Free classes', free:'Free',
+  desc:'Free in-person and online GED prep classes through Minneapolis Public Schools, with North and South campuses, day and evening. Ages 18 and up.', note:'Questions: 612-668-1863. Tutoring works well alongside a class.'},
+ {name:'Adult Literacy Hotline', url:'https://hotline.mnabe.org/', subj:[], type:'Free classes', free:'Free',
+  desc:'Minnesota\'s statewide line for finding free GED, English, and college-prep classes near you, with referrals in Spanish, Somali, Hmong, and many other languages.', note:'Call 800-222-1990 or text 612-424-1211.'},
+ {name:'Khan Academy', url:'https://www.khanacademy.org', subj:['math','rla'], type:'Practice', free:'Free',
+  desc:'Not GED-specific, but the best free place to drill a single math skill until it sticks. Search the exact topic and do the practice set.', note:'Best for extra practice after a Get Sum Math video.'},
+ {name:'TI-30XS online calculator tutorial', url:'https://ged.com/study/calculator/', subj:['math','science'], type:'Official', free:'Free',
+  desc:'The test maker\'s guide to the on-screen calculator you will use. Learn the fraction key, negatives, and exponents before test day.', note:'Ten minutes here saves points on test day.'},
+ {name:'Minnesota GED information', url:'https://ged.com/policies/minnesota/', subj:[], type:'Official', free:'Free',
+  desc:'Minnesota-specific rules: age requirements, cost per subject, and online testing eligibility.', note:'Prices and rules change. Check here before you book.'}
+];
