@@ -25,8 +25,6 @@ main#app{min-height:60vh}
 .s-rla{--s:#B07A8A;--s-soft:#F6E6EA}
 .s-science{--s:#7FA68F;--s-soft:#E4F0E8}
 .s-social{--s:#C99A5B;--s-soft:#F7ECDC}
-:root[data-theme="dark"] .s-math,:root[data-theme="dark"] .s-rla,:root[data-theme="dark"] .s-science,:root[data-theme="dark"] .s-social{--s-soft:var(--surface-2)}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .s-math,:root:not([data-theme="light"]) .s-rla,:root:not([data-theme="light"]) .s-science,:root:not([data-theme="light"]) .s-social{--s-soft:var(--surface-2)}}
 
 /* ---------- home features ---------- */
 .feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:-10px}
