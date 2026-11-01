@@ -35,7 +35,7 @@ main#app{min-height:60vh}
 .feature{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;transition:transform .2s ease,box-shadow .2s ease}
 .feature:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
 .feature .k{font-size:.7rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--cinnamon)}
-.feature h3{font-size:1.5rem}
+.feature h3{font-size:1.7rem}
 .feature p{color:var(--ink-soft);font-size:.95rem;flex:1}
 .feature .go{color:var(--cinnamon);font-weight:600;font-size:.9rem}
 
@@ -45,7 +45,7 @@ main#app{min-height:60vh}
 .subject{position:relative;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:10px;transition:transform .2s ease,box-shadow .2s ease;overflow:hidden}
 .subject::before{content:"";position:absolute;inset:0 auto 0 0;width:6px;background:var(--s)}
 .subject:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
-.subject h3{font-size:1.9rem}
+.subject h3{font-size:2.1rem}
 .subject .meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.8rem;color:var(--ink-soft);letter-spacing:.04em}
 .subject p{color:var(--ink-soft)}
 .subject .count{margin-top:auto;font-weight:600;color:var(--s);font-size:.9rem}
@@ -58,14 +58,14 @@ main#app{min-height:60vh}
 .topic:hover{border-color:var(--s)}
 .topic .n{counter-increment:topic;font-family:"Cormorant Garamond",Georgia,serif;font-size:1.6rem;font-weight:600;color:var(--s);min-width:34px}
 .topic .n::before{content:counter(topic,decimal-leading-zero)}
-.topic h3{font-size:1.3rem;margin-bottom:2px}
+.topic h3{font-size:1.5rem;margin-bottom:2px}
 .topic p{color:var(--ink-soft);font-size:.92rem}
 .topic .done{font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--pine)}
 .topic .arrow{color:var(--s);font-size:1.3rem}
 .lesson{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:40px;align-items:start}
 @media (max-width:900px){.lesson{grid-template-columns:1fr}}
 .lesson-body{max-width:46rem}
-.lesson-body h2{font-size:1.9rem;margin:34px 0 12px}
+.lesson-body h2{font-size:2.1rem;margin:34px 0 12px}
 .lesson-body h2:first-child{margin-top:0}
 .lesson-body p{margin:0 0 14px;color:var(--ink)}
 .lesson-body ul,.lesson-body ol{margin:0 0 14px;padding-left:1.3rem;color:var(--ink)}

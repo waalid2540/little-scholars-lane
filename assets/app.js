@@ -1,8 +1,8 @@
-/* Little Scholars Lane study app: hash router, study guides, practice tests, resources, help chat. */
+/* Ivory Study study app: hash router, study guides, practice tests, resources, help chat. */
 (function(){
   var $ = function(sel, el){ return (el||document).querySelector(sel); };
   var app = document.getElementById('app');
-  var CONTACT = 'hello@littlescholarslane.com';
+  var CONTACT = 'hello@ivorystudy.com';
 
   /* ---------- storage ---------- */
   var store = {
@@ -48,7 +48,7 @@
         '<div class="hero-actions"><a class="btn btn-primary" href="#/study">Start studying free</a><a class="btn btn-ghost" href="#/quote">Get a tutoring quote</a></div>',
         '<div class="tiny-facts"><span>No account needed</span><span>Progress saved on this device</span><span>First 30 minutes of tutoring free</span></div>',
       '</div>',
-      '<div class="sign"><h2>Little Scholars Lane</h2><p>GED prep from someone who has sat in your seat. Minnesota requires 145 or higher on each of the four GED subjects. Everything here is built to get you there one subject at a time.</p></div>',
+      '<div class="sign"><h2>Ivory Study</h2><p>GED prep from someone who has sat in your seat. Minnesota requires 145 or higher on each of the four GED subjects. Everything here is built to get you there one subject at a time.</p></div>',
     '</section>',
     '<section class="wrap" style="padding-top:0">',
       '<div class="feature-grid">',
@@ -95,7 +95,7 @@
   }
   function aboutHTML(){
     return '<section id="about" class="wrap"><div class="about"><div class="about-card">'+(window.ABOUT_SVG||'')+'</div><div><h2>Hi, I’m Aisha. I passed the GED too.</h2>' +
-      '<p>Not long ago I was the one studying for this test, bouncing between websites, apps, and videos until I found the few that actually worked. I started Little Scholars Lane so the next person doesn’t have to search that hard, and so they have someone patient sitting next to them while they do it.</p>' +
+      '<p>Not long ago I was the one studying for this test, bouncing between websites, apps, and videos until I found the few that actually worked. I started Ivory Study so the next person doesn’t have to search that hard, and so they have someone patient sitting next to them while they do it.</p>' +
       '<p>Sessions are one-on-one unless you bring a study partner. I know the current test from the inside, I use the official practice tests to track your progress, and I build your plan around your actual week, not an ideal one.</p>' +
       '<div class="pills"><span class="pill">Passed the GED myself</span><span class="pill">Knows the current test</span><span class="pill">Minneapolis based</span><span class="pill">Fluent in Spanish</span></div></div></div></section>';
   }
@@ -297,7 +297,7 @@
     {k:['flashcard','flashcards','cards','memorize','vocabulary','vocab'], a:'<a href="#/cards">Flashcards are here</a>, one deck per subject. Mark each card got it or not yet, and the misses come back more often. Ten minutes a day is plenty.'},
     {k:['what to bring','test day','day of the test','id','identification','locker','bring'], a:'Bring a government photo ID that matches your GED account name exactly, plus your confirmation. Everything else goes in a locker. <a href="#/testday">The test day page</a> covers the whole day, including breaks, scratch paper, and when scores post.'},
     {k:['progress','how am i doing','am i ready','ready'], a:'<a href="#/progress">Your progress page</a> shows lessons done, practice averages, and a readiness read for each subject. As a rule of thumb: averaging 80% or better on the quizzes here means it is time to take the official GED Ready practice test.'},
-    {k:['hi','hello','hey','salaam','salam','hola'], a:'Hi! I am the study helper on Little Scholars Lane. Ask me about the GED test, registering, costs, or where to start. If I cannot answer, I will help you send your question to Aisha.'},
+    {k:['hi','hello','hey','salaam','salam','hola'], a:'Hi! I am the study helper on Ivory Study. Ask me about the GED test, registering, costs, or where to start. If I cannot answer, I will help you send your question to Aisha.'},
     {k:['thank','thanks'], a:'You are welcome. Go get it. And if you want a person in your corner, <a href="#/quote">the quote form is right here</a>.'}
   ];
   var chat = {log:[]};

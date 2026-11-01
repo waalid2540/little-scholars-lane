@@ -1,4 +1,4 @@
-/* Original practice questions written for Little Scholars Lane. Not official GED items. */
+/* Original practice questions written for Ivory Study. Not official GED items. */
 window.QUESTIONS = {
 math: [
  {skill:'Fractions', q:'What is 3/4 + 1/6?', c:['4/10','11/12','5/6','4/24'], a:1, e:'Common denominator 12. 3/4 = 9/12 and 1/6 = 2/12. 9 + 2 = 11, so 11/12.'},

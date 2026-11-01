@@ -1,4 +1,4 @@
-/* Study guide content for Little Scholars Lane. Written for adults studying for the GED. */
+/* Study guide content for Ivory Study. Written for adults studying for the GED. */
 window.SUBJECTS = [
 {
   id:'math', name:'Mathematical Reasoning', short:'Math', cls:'s-math',
