@@ -48,7 +48,7 @@
         '<div class="hero-actions"><a class="btn btn-primary" href="#/study">Start studying free</a><a class="btn btn-ghost" href="#/quote">Get a tutoring quote</a></div>',
         '<div class="tiny-facts"><span>No account needed</span><span>Progress saved on this device</span><span>First 30 minutes of tutoring free</span></div>',
       '</div>',
-      '<div class="sign"><h2>Ivory Study</h2><p>GED prep from someone who has sat in your seat. Minnesota requires 145 or higher on each of the four GED subjects. Everything here is built to get you there one subject at a time.</p></div>',
+      '<div class="stage-wrap"><div class="stage" id="stage" aria-hidden="true"><div class="ring" id="ring"></div></div><div class="stage-cap"><span class="stage-week" id="stage-week">Week 1</span><span class="stage-line" id="stage-line">Three practice tests. All under 145.</span><button class="btn-text stage-replay" id="stage-replay" hidden>Replay ↻</button></div></div>',
     '</section>',
     '<section class="wrap" style="padding-top:0">',
       '<div class="feature-grid">',
@@ -69,7 +69,45 @@
     quoteHTML()
     ].join('');
     bindQuote();
+    initStage();
     if (scrollQuote) { var q = $('#quote'); if (q) q.scrollIntoView(); }
+  }
+
+  /* ---------- 3D opening: papers circle, settle, flip ---------- */
+  var stageRun = 0;
+  function initStage(){
+    var stage = $('#stage'), ring = $('#ring'); if (!stage || !ring) return;
+    var tmp = document.createElement('div'); tmp.innerHTML = window.RESULTS_HTML || '';
+    var svgs = [].map.call(tmp.querySelectorAll('.ba-photo svg'), function(x){ return x.outerHTML; });
+    if (svgs.length < 6) { stage.parentNode.innerHTML = '<div class="sign"><h2>Ivory Study</h2><p>GED prep from someone who has sat in your seat.</p></div>'; return; }
+    var pairs = [[svgs[0],svgs[1],'Math','132','152','Passed'],[svgs[2],svgs[3],'Science + Social','141','166','College Ready'],[svgs[4],svgs[5],'Language Arts','139','158','Passed']];
+    ring.innerHTML = pairs.map(function(pr,i){ return '<div class="pcard" data-i="'+i+'"><div class="face front">'+pr[0]+'<span class="ptag">Before</span></div><div class="face back">'+pr[1]+'<span class="ptag after">After</span><span class="pscore">'+pr[3]+' → '+pr[4]+'<small>'+pr[5]+'</small></span></div></div>'; }).join('');
+    var cards = [].slice.call(ring.children);
+    var week = $('#stage-week'), line = $('#stage-line'), replay = $('#stage-replay');
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var run = ++stageRun;
+    function fanPos(i){ return 'translateX(calc(('+(i-1)+') * var(--fan))) rotate('+((i-1)*5)+'deg)'; }
+    function finalState(){ cards.forEach(function(c,i){ c.classList.add('settle','flip'); c.style.transform = fanPos(i)+' rotateY(180deg)'; }); week.textContent = 'Week 10'; line.textContent = 'Math 132 → 152 · Science 141 → 166 · Language Arts 139 → 158'; replay.hidden = false; }
+    if (reduced) { finalState(); return; }
+    cards.forEach(function(c){ c.classList.remove('settle','flip'); c.style.transform = ''; });
+    replay.hidden = true; week.textContent = 'Week 1'; line.textContent = 'Three practice tests. All under 145.';
+    var T = 4200, turns = 2.4, t0 = null;
+    function ease(x){ return 1 - Math.pow(1 - x, 3); }
+    function frame(ts){
+      if (run !== stageRun || !document.body.contains(ring)) return;
+      if (t0 === null) t0 = ts;
+      var x = Math.min(1, (ts - t0) / T), a = turns * 360 * ease(x);
+      cards.forEach(function(c,i){ var deg = a + i*120; c.style.transform = 'rotateY('+deg+'deg) translateZ(var(--orbit)) rotateY('+(-deg)+'deg)'; });
+      if (x < 1) requestAnimationFrame(frame);
+    }
+    var start = Date.now();
+    function at(ms, fn){ setTimeout(function(){ if (run === stageRun && document.body.contains(ring)) fn(); }, ms); }
+    at(T + 300, function(){ week.textContent = 'Week 2'; line.textContent = 'One week of focused practice. Same three students.'; cards.forEach(function(c,i){ c.classList.add('settle'); c.style.transform = fanPos(i); }); });
+    [3,5,8,10].forEach(function(wk,k){ at(T + 1700 + k*450, function(){ week.textContent = 'Week '+wk; }); });
+    cards.forEach(function(c,i){ at(T + 2300 + i*420, function(){ c.classList.add('flip'); c.style.transform = fanPos(i)+' rotateY(180deg)'; }); });
+    at(T + 3900, function(){ line.textContent = 'Math 132 → 152 · Science 141 → 166 · Language Arts 139 → 158'; replay.hidden = false; });
+    requestAnimationFrame(frame);
+    replay.onclick = function(){ initStage(); };
   }
   function feature(href, k, h, p, go){ return '<a class="feature" href="'+href+'"><span class="k">'+k+'</span><h3>'+h+'</h3><p>'+p+'</p><span class="go">'+go+' →</span></a>'; }
 
