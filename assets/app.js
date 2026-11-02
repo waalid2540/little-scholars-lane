@@ -2,7 +2,7 @@
 (function(){
   var $ = function(sel, el){ return (el||document).querySelector(sel); };
   var app = document.getElementById('app');
-  var CONTACT = 'hello@ivorystudy.com';
+  var CONTACT = 'aishaawadir@gmail.com';
 
   /* ---------- storage ---------- */
   var store = {
