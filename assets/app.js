@@ -144,7 +144,7 @@
       '<label>Subject<select name="subject" id="subject" required><option value="">Choose a subject</option><option value="math">Mathematical Reasoning</option><option value="rla">Reasoning Through Language Arts</option><option value="science">Science</option><option value="social">Social Studies</option><option value="all">All four subjects</option><option value="spanish">GED in Spanish</option><option value="testday">Test-day prep &amp; registration</option></select></label></div>' +
       '<label>Anything I should know? <textarea name="notes" placeholder="I work nights, so weekday mornings are best. Math is the one I’m dreading."></textarea></label>' +
       '<div class="form-foot"><div class="estimate" id="estimate">Pick a starting point and subject for a starting price</div><button class="btn btn-primary" type="submit">Send my quote request</button></div>' +
-      '<small>Submitting opens an email to '+CONTACT+' with your answers filled in. Nothing is stored on this page.</small></form></div></section>';
+      '<small>Submitting opens your email app with your answers filled in, addressed to Aisha. Nothing is stored on this page.</small></form></div></section>';
   }
   function bindQuote(){
     var grade = $('#grade'), subject = $('#subject'), est = $('#estimate'), form = $('#quote-form');
@@ -335,7 +335,7 @@
     {k:['flashcard','flashcards','cards','memorize','vocabulary','vocab'], a:'<a href="#/cards">Flashcards are here</a>, one deck per subject. Mark each card got it or not yet, and the misses come back more often. Ten minutes a day is plenty.'},
     {k:['what to bring','test day','day of the test','id','identification','locker','bring'], a:'Bring a government photo ID that matches your GED account name exactly, plus your confirmation. Everything else goes in a locker. <a href="#/testday">The test day page</a> covers the whole day, including breaks, scratch paper, and when scores post.'},
     {k:['progress','how am i doing','am i ready','ready'], a:'<a href="#/progress">Your progress page</a> shows lessons done, practice averages, and a readiness read for each subject. As a rule of thumb: averaging 80% or better on the quizzes here means it is time to take the official GED Ready practice test.'},
-    {k:['hi','hello','hey','salaam','salam','hola'], a:'Hi! I am the study helper on Ivory Study. Ask me about the GED test, registering, costs, or where to start. If I cannot answer, I will help you send your question to Aisha.'},
+    {k:['hi','hello','hey','salaam','salam','hola'], a:'Hi! I am the study helper on Ivory Study. Ask me about the GED test, registering, costs, or where to start. If I cannot answer, I will point you to the quote form so Aisha can reply.'},
     {k:['thank','thanks'], a:'You are welcome. Go get it. And if you want a person in your corner, <a href="#/quote">the quote form is right here</a>.'}
   ];
   var chat = {log:[]};
@@ -351,7 +351,7 @@
     if (best && bestScore>=3) return best.a;
     var tm = topicMatch(text);
     if (tm) return 'That sounds like <b>'+tm.t.title+'</b> in '+tm.s.short+'. <a href="#/study/'+tm.s.id+'/'+tm.t.id+'">Here is the lesson</a>, with a worked example and a problem to try. If it still does not click, send it to Aisha with the button below.';
-    return 'I do not have a ready answer for that one. Two options: <ul><li><a href="#" data-act="email">Send this question to Aisha</a>. She reads every message and usually replies within a business day.</li><li>Ask an AI helper like <a href="https://grok.com" target="_blank" rel="noopener">Grok</a> for an explanation, then check the answer against the study guide.</li></ul>';
+    return 'I do not have a ready answer for that one. Two options: <ul><li><a href="#/quote">Send this question to Aisha through the quote form</a>. She reads every message and usually replies within a business day.</li><li>Ask an AI helper like <a href="https://grok.com" target="_blank" rel="noopener">Grok</a> for an explanation, then check the answer against the study guide.</li></ul>';
   }
   function renderHelp(){
     app.innerHTML = '<div class="wrap"><div class="page-head" style="padding-bottom:20px"><span class="eyebrow">Need help?</span><h1>Ask anything about the GED</h1><p>Quick answers about the test, registration, cost, and where to start. For anything the helper cannot answer, send it straight to Aisha.</p></div>' +
@@ -359,7 +359,7 @@
       '<div class="chat-log" id="log"></div>' +
       '<div class="chips" id="chips">'+['What score do I need to pass?','How do I register?','How much does the test cost?','Where should I start?','Tell me about the essay','I need help with fractions'].map(function(c){ return '<button class="chip">'+c+'</button>'; }).join('')+'</div>' +
       '<form class="chat-input" id="chat-form"><input id="chat-in" type="text" placeholder="Type a question…" autocomplete="off"><button class="btn btn-primary btn-sm" type="submit">Send</button></form></div>' +
-      '<aside class="help-side"><div class="side-card"><h4>Talk to Aisha</h4><p>Real person, real reply. Send a question or ask for a free 30-minute meet.</p><a class="btn btn-primary btn-sm" id="email-aisha" href="mailto:'+CONTACT+'?subject='+encodeURIComponent('Question from the website')+'" style="display:inline-flex;border:0">Email Aisha</a></div>' +
+      '<aside class="help-side"><div class="side-card"><h4>Talk to Aisha</h4><p>Real person, real reply. Use the quote form to send a question or ask for a free 30-minute meet.</p><a class="btn btn-primary btn-sm" id="email-aisha" href="#/quote" style="display:inline-flex;border:0">Ask Aisha</a></div>' +
       '<div class="side-card"><h4>Free classes and hotlines</h4><a href="tel:8002221990">Adult Literacy Hotline · 800-222-1990</a><a href="sms:6124241211">Text the hotline · 612-424-1211</a><a href="tel:6126681863">Minneapolis Adult Ed · 612-668-1863</a></div>' +
       '<div class="side-card"><h4>About this helper</h4><p class="small">The study helper answers common questions from a fixed list written by Aisha. It is not a live person and does not use AI. Nothing you type here is stored or sent anywhere unless you choose to email it.</p></div></aside></div></div>';
     chat.log = [{who:'bot', html:'Hi! Ask me about the GED test, registering, costs, or where to start. Tap a question below or type your own.'}];
