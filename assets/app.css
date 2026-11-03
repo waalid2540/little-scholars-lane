@@ -191,7 +191,6 @@ main#app{min-height:60vh}
 .tool:hover{border-color:var(--cinnamon);transform:translateY(-4px);box-shadow:0 16px 36px rgba(170,110,130,.14)}
 .tool b{font-weight:600}
 .tool span{font-size:.9rem;color:var(--ink-soft)}
-.feature-grid{grid-template-columns:repeat(4,1fr)}
 
 /* ---------- plan ---------- */
 .plan-weeks{display:grid;gap:18px}
