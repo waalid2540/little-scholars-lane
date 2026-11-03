@@ -19,7 +19,109 @@
     science:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.4 3h5.2"/><path d="M10.6 3v6.3L5.4 18a2 2 0 0 0 1.7 3h9.8a2 2 0 0 0 1.7-3l-5.2-8.7V3"/><path d="M7.7 14.6h8.6"/></svg>',
     social:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.6 12 4l9 5.6"/><path d="M5.6 9.6V18M9.9 9.6V18M14.1 9.6V18M18.4 9.6V18"/><path d="M3 21h18"/></svg>'
   };
-  function ring(pct, label){ var p = Math.max(0, Math.min(100, Math.round(pct||0))); return '<span class="sring" style="--p:'+p+'" role="img" aria-label="'+label+' '+p+' percent"><i>'+p+'%</i></span>'; }
+  function ring(pct, label){ var p = Math.max(0, Math.min(100, Math.round(pct||0))); return '<span class="sring" data-ring="'+p+'" style="--p:0" role="img" aria-label="'+label+' '+p+' percent"><i>0%</i></span>'; }
+
+  /* ---------- animate rings and bars when they scroll into view ---------- */
+  function animateTo(el, to, ms, apply){
+    if (REDUCED || ms <= 0) { apply(to); return; }
+    if (document.hidden) {           /* rAF is paused in a background tab: wait, do not snap */
+      apply(0);
+      document.addEventListener('visibilitychange', function once(){
+        document.removeEventListener('visibilitychange', once);
+        if (document.contains(el)) animateTo(el, to, ms, apply);
+      });
+      return;
+    }
+    var t0 = null, done = false;
+    function step(ts){
+      if (t0 === null) t0 = ts;
+      var x = Math.min(1, (ts - t0) / ms);
+      apply(to * (1 - Math.pow(1 - x, 3)));
+      if (x >= 1) { done = true; return; }
+      if (document.contains(el)) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+    setTimeout(function(){ if (!done && document.contains(el)) apply(to); }, ms + 700);
+  }
+  var ringObserver = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var el = e.target; ringObserver.unobserve(el); el.dataset.played = '1';
+      if (el.hasAttribute('data-ring')) {
+        var target = +el.dataset.ring, out = el.querySelector('i') || el.querySelector('div');
+        animateTo(el, target, 900, function(v){
+          el.style.setProperty('--p', v.toFixed(1));
+          if (out) { var txt = Math.round(v) + '%'; if (out.firstChild && out.firstChild.nodeType === 3) out.firstChild.nodeValue = txt; else out.textContent = txt; }
+        });
+      } else if (el.hasAttribute('data-bar')) {
+        animateTo(el, +el.dataset.bar, 800, function(v){ el.style.width = v.toFixed(1) + '%'; });
+      }
+    });
+  }, {threshold:.35, rootMargin:'0px 0px -40px 0px'}) : null;
+  function scanAnimated(){
+    if (!ringObserver) return;
+    document.querySelectorAll('[data-ring]:not([data-played]),[data-bar]:not([data-played])').forEach(function(el){ ringObserver.observe(el); });
+  }
+  if (window.MutationObserver) {
+    var mo = new MutationObserver(function(){ scanAnimated(); });
+    mo.observe(app, {childList:true, subtree:true});
+  }
+
+  /* ---------- test-date countdown ---------- */
+  function countdownHTML(){
+    var plan = store.get('plan', null);
+    if (!plan || !plan.date) return '<a class="countdown empty" href="#/plan"><span class="cd-label">No test date yet</span><span class="cd-sub">Pick one and get a week-by-week plan →</span></a>';
+    var d = new Date(plan.date + 'T12:00:00');
+    var days = Math.ceil((d - new Date()) / 86400000);
+    var pretty = d.toLocaleDateString(undefined, {weekday:'long', month:'long', day:'numeric'});
+    if (days < 0) return '<a class="countdown past" href="#/plan"><span class="cd-label">Your test date has passed</span><span class="cd-sub">Set a new one →</span></a>';
+    if (days === 0) return '<a class="countdown today" href="#/testday"><span class="cd-label">Test day is today</span><span class="cd-sub">Read the test day checklist →</span></a>';
+    return '<a class="countdown" href="#/plan"><span class="cd-num" data-count="'+days+'">0</span><span class="cd-text"><b>day'+(days===1?'':'s')+' until your test</b><span class="cd-sub">'+pretty+' · open your plan →</span></span></a>';
+  }
+  function startCountdown(){
+    var el = $('.cd-num'); if (!el) return;
+    var n = +el.dataset.count;
+    if (REDUCED) { el.textContent = n; return; }
+    animateTo(el, n, 1100, function(v){ el.textContent = Math.round(v); });
+  }
+
+  /* ---------- confetti ---------- */
+  function confetti(){
+    if (REDUCED) return;
+    var cv = document.createElement('canvas');
+    cv.className = 'confetti-cv'; document.body.appendChild(cv);
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var W = innerWidth || document.documentElement.clientWidth || 360;
+    var H = innerHeight || document.documentElement.clientHeight || 640;
+    function size(){ W = innerWidth || W; H = innerHeight || H; cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W+'px'; cv.style.height = H+'px'; ctx && ctx.setTransform(dpr,0,0,dpr,0,0); }
+    var ctx = null; size(); ctx = cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+    window.addEventListener('resize', size);
+    var colors = ['#D4607C','#E9CDB0','#7FA68F','#FBE3E9','#F0A0B5','#FFFFFF'];
+    var bits = [], N = 110;
+    for (var i = 0; i < N; i++) bits.push({
+      x: W * (0.2 + Math.random() * 0.6), y: -20 - Math.random() * H * 0.4,
+      w: 6 + Math.random() * 7, h: 9 + Math.random() * 10,
+      vx: (Math.random() - 0.5) * 2.4, vy: 2 + Math.random() * 3.2,
+      rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.22,
+      c: colors[(Math.random() * colors.length) | 0], sway: Math.random() * Math.PI * 2
+    });
+    var t0 = performance.now();
+    function frame(ts){
+      var age = ts - t0;
+      if (age > 4200 || !document.body.contains(cv)) { window.removeEventListener('resize', size); cv.remove(); return; }
+      var fade = age > 3000 ? Math.max(0, 1 - (age - 3000) / 1200) : 1;
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalAlpha = fade;
+      bits.forEach(function(b){
+        b.sway += 0.03; b.x += b.vx + Math.sin(b.sway) * 0.7; b.y += b.vy; b.vy += 0.045; b.rot += b.vr;
+        ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot);
+        ctx.fillStyle = b.c; ctx.fillRect(-b.w/2, -b.h/2, b.w, b.h); ctx.restore();
+      });
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    setTimeout(function(){ window.removeEventListener('resize', size); if (cv.parentNode) cv.remove(); }, 4600);
+  }
   function subjectCard(o){
     return '<a class="subject '+o.cls+'" href="'+o.href+'">' +
       '<div class="sub-top"><span class="sub-icon">'+(ICONS[o.icon]||'')+'</span>'+ring(o.pct, o.ringLabel||'progress')+'</div>' +
@@ -29,6 +131,8 @@
       '<div class="sub-foot"><span class="sub-big"><b>'+o.bigN+'</b><span>'+o.bigLabel+'</span></span><span class="sub-go">'+o.go+' →</span></div></a>';
   }
   window.LSL = {$:$, app:app, store:store, esc:esc, subj:subj, topicOf:topicOf, doneSet:doneSet, attempts:function(){ return store.get('attempts', []); }, subjectCard:subjectCard, ring:ring, ICONS:ICONS};
+
+  var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- router ---------- */
   function route(){
@@ -61,6 +165,7 @@
         '<h1>Your GED, <em>one calm step at a time.</em></h1>',
         '<p class="lede">Free study guides, practice tests, and the resources that actually helped me pass, plus one-on-one tutoring for adults in Minneapolis and St. Paul when you want someone beside you.</p>',
         '<div class="hero-actions"><a class="btn btn-primary" href="#/study">Start studying free</a><a class="btn btn-ghost" href="#/quote">Get a tutoring quote</a></div>',
+        countdownHTML(),
         '<div class="tiny-facts"><span>No account needed</span><span>Progress saved on this device</span><span>First 30 minutes of tutoring free</span></div>',
       '</div>',
       '<div class="stage-wrap"><div class="stage" id="stage" aria-hidden="true"><div class="ring" id="ring"></div></div><div class="stage-cap"><span class="stage-week" id="stage-week">Week 1</span><span class="stage-line" id="stage-line">Three practice tests. All under 145.</span><button class="btn-text stage-replay" id="stage-replay" hidden>Replay ↻</button></div></div>',
@@ -84,6 +189,7 @@
     quoteHTML()
     ].join('');
     bindQuote();
+    startCountdown();
     initStage();
     if (scrollQuote) { var q = $('#quote'); if (q) q.scrollIntoView(); }
   }
@@ -103,6 +209,31 @@
     var run = ++stageRun;
     function fanPos(i){ return 'translateX(calc(('+(i-1)+') * var(--fan))) rotate('+((i-1)*5)+'deg)'; }
     function finalState(){ cards.forEach(function(c,i){ c.classList.add('settle','flip'); c.style.transform = fanPos(i)+' rotateY(180deg)'; }); week.textContent = 'Week 10'; line.textContent = 'Math 132 → 152 · Science 141 → 166 · Language Arts 139 → 158'; replay.hidden = false; }
+    function startDrift(cards, ring, stage){
+      if (REDUCED) return;
+      cards.forEach(function(c,i){ c.style.setProperty('--dur', (5.5 + i*1.3).toFixed(1)+'s'); c.style.setProperty('--delay', (i*0.7).toFixed(1)+'s'); c.classList.add('drift'); });
+      var wrap = stage.parentNode, tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
+      function loop(){
+        cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08;
+        ring.style.transform = 'rotateX('+cy.toFixed(2)+'deg) rotateY('+cx.toFixed(2)+'deg)';
+        if (Math.abs(tx-cx) > 0.05 || Math.abs(ty-cy) > 0.05) raf = requestAnimationFrame(loop); else raf = null;
+      }
+      function onMove(e){
+        if (!document.contains(stage)) { window.removeEventListener('pointermove', onMove); window.removeEventListener('scroll', onScroll); return; }
+        var r = stage.getBoundingClientRect();
+        tx = ((e.clientX - (r.left + r.width/2)) / r.width) * 16;
+        ty = -((e.clientY - (r.top + r.height/2)) / r.height) * 12;
+        if (!raf) raf = requestAnimationFrame(loop);
+      }
+      function onScroll(){
+        if (!document.contains(stage)) { window.removeEventListener('scroll', onScroll); window.removeEventListener('pointermove', onMove); return; }
+        var off = Math.max(-26, Math.min(26, window.scrollY * -0.05));
+        wrap.style.setProperty('--drift-y', off.toFixed(1)+'px');
+      }
+      window.addEventListener('pointermove', onMove, {passive:true});
+      window.addEventListener('scroll', onScroll, {passive:true});
+      onScroll();
+    }
     if (reduced) { finalState(); return; }
     cards.forEach(function(c){ c.classList.remove('settle','flip'); c.style.transform = ''; });
     replay.hidden = true; week.textContent = 'Week 1'; line.textContent = 'Three practice tests. All under 145.';
@@ -120,7 +251,7 @@
     at(T + 300, function(){ week.textContent = 'Week 2'; line.textContent = 'One week of focused practice. Same three students.'; cards.forEach(function(c,i){ c.classList.add('settle'); c.style.transform = fanPos(i); }); });
     [3,5,8,10].forEach(function(wk,k){ at(T + 1700 + k*450, function(){ week.textContent = 'Week '+wk; }); });
     cards.forEach(function(c,i){ at(T + 2300 + i*420, function(){ c.classList.add('flip'); c.style.transform = fanPos(i)+' rotateY(180deg)'; }); });
-    at(T + 3900, function(){ line.textContent = 'Math 132 → 152 · Science 141 → 166 · Language Arts 139 → 158'; replay.hidden = false; });
+    at(T + 3900, function(){ line.textContent = 'Math 132 → 152 · Science 141 → 166 · Language Arts 139 → 158'; replay.hidden = false; startDrift(cards, ring, stage); });
     requestAnimationFrame(frame);
     replay.onclick = function(){ initStage(); };
   }
@@ -315,14 +446,16 @@
     var msg = pct>=85 ? 'Strong. If this holds up over a few quizzes, you are ready for the official GED Ready practice test in '+s.short+'.' : pct>=75 ? 'On track. Review the misses below, then try the full set. Above 75% consistently means you are close.' : pct>=60 ? 'Getting there. Focus your studying on the skills with the lowest bars below, then come back.' : 'A starting point, not a verdict. Work through the '+s.short+' study guide topic by topic, then try again. Most people start right here.';
     var weakest = Object.keys(skills).sort(function(a,b){ return (skills[a].r/skills[a].t) - (skills[b].r/skills[b].t); })[0];
     app.innerHTML = '<div class="wrap '+s.cls+'" style="padding-top:36px"><div class="crumbs"><span><a href="#/practice">Practice tests</a></span><span>'+s.name+'</span><span>Results</span></div>' +
-      '<div class="score-hero"><div class="score-ring'+(pct>=75?' good':'')+'" style="--p:'+pct+'"><div>'+pct+'%<small>'+right+' of '+n+'</small></div></div><div><h1 style="font-size:2.2rem;margin-bottom:8px">'+s.name+'</h1><p>'+msg+'</p>' +
+      '<div class="score-hero"><div class="score-ring'+(pct>=75?' good':'')+(pct>=75?' glow':'')+'" data-ring="'+pct+'" style="--p:0"><div>0%<small>'+right+' of '+n+'</small></div></div><div><h1 style="font-size:2.2rem;margin-bottom:8px">'+s.name+'</h1><p>'+msg+'</p>' +
       '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px"><a class="btn btn-primary btn-sm" href="#/practice/'+s.id+'">Try again</a>'+(weakest?'<a class="btn btn-ghost btn-sm" href="#/study/'+s.id+'">Study '+s.short+' →</a>':'')+'<a class="btn btn-ghost btn-sm" href="#/help">Ask for help</a></div></div></div>' +
-      '<div class="skills">' + Object.keys(skills).map(function(k){ var v = skills[k], p = Math.round(v.r/v.t*100); return '<div class="skill"><span>'+k+'</span><span class="muted">'+v.r+' / '+v.t+'</span><div class="bar"><i style="width:'+p+'%;background:'+(p>=75?'var(--pine)':'var(--cinnamon)')+'"></i></div></div>'; }).join('') + '</div>' +
+      '<div class="skills">' + Object.keys(skills).map(function(k){ var v = skills[k], p = Math.round(v.r/v.t*100); return '<div class="skill"><span>'+k+'</span><span class="muted">'+v.r+' / '+v.t+'</span><div class="bar"><i data-bar="'+p+'" style="width:0;background:'+(p>=75?'var(--pine)':'var(--cinnamon)')+'"></i></div></div>'; }).join('') + '</div>' +
       '<h2 style="font-size:1.8rem;margin:36px 0 4px">Review every question</h2><p class="muted">Read the explanations for the ones you missed, and for any you guessed.</p>' +
       '<div class="review">' + st.qs.map(function(q,k){ var ya = st.ans[k], ok = ya===q.a; return '<div class="rev '+(ok?'ok':'bad')+'"><div class="q-skill">'+(k+1)+' · '+q.skill+(st.flags[k]?' · flagged':'')+'</div><div class="q-text">'+q.q+'</div><div class="ya">Your answer: <b>'+(ya===undefined?'(blank)':'ABCD'[ya]+'. '+q.c[ya])+'</b>'+(ok?' ✓':'')+'</div>'+(!ok?'<div class="ya">Correct answer: <b>'+'ABCD'[q.a]+'. '+q.c[q.a]+'</b></div>':'')+'<div class="ex">'+q.e+'</div></div>'; }).join('') + '</div>' +
       '<div class="lesson-nav"><a class="btn btn-ghost" href="#/practice">All practice tests</a><a class="btn btn-primary" href="#/practice/'+s.id+'">Take another '+s.short+' quiz</a></div></div>';
     quiz.state = null;
     window.scrollTo(0,0);
+    scanAnimated();
+    if (pct >= 75) setTimeout(confetti, 420);
   }
 
   /* ---------- resources ---------- */
