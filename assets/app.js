@@ -67,22 +67,30 @@
     mo.observe(app, {childList:true, subtree:true});
   }
 
-  /* ---------- test-date countdown ---------- */
+  /* ---------- test-date countdown: one small line ---------- */
   function countdownHTML(){
     var plan = store.get('plan', null);
-    if (!plan || !plan.date) return '<a class="countdown empty" href="#/plan"><span class="cd-label">No test date yet</span><span class="cd-sub">Pick one and get a week-by-week plan →</span></a>';
+    if (!plan || !plan.date) return '<p class="hero-note"><a href="#/plan">Set a test date</a> and get a week-by-week plan.</p>';
     var d = new Date(plan.date + 'T12:00:00');
     var days = Math.ceil((d - new Date()) / 86400000);
-    var pretty = d.toLocaleDateString(undefined, {weekday:'long', month:'long', day:'numeric'});
-    if (days < 0) return '<a class="countdown past" href="#/plan"><span class="cd-label">Your test date has passed</span><span class="cd-sub">Set a new one →</span></a>';
-    if (days === 0) return '<a class="countdown today" href="#/testday"><span class="cd-label">Test day is today</span><span class="cd-sub">Read the test day checklist →</span></a>';
-    return '<a class="countdown" href="#/plan"><span class="cd-num" data-count="'+days+'">0</span><span class="cd-text"><b>day'+(days===1?'':'s')+' until your test</b><span class="cd-sub">'+pretty+' · open your plan →</span></span></a>';
+    if (days < 0) return '<p class="hero-note">Your test date has passed. <a href="#/plan">Set a new one.</a></p>';
+    if (days === 0) return '<p class="hero-note"><b>Test day is today.</b> <a href="#/testday">Run through the checklist.</a></p>';
+    return '<p class="hero-note"><a href="#/plan"><b>'+days+' day'+(days===1?'':'s')+'</b> to your test.</a></p>';
   }
-  function startCountdown(){
-    var el = $('.cd-num'); if (!el) return;
-    var n = +el.dataset.count;
-    if (REDUCED) { el.textContent = n; return; }
-    animateTo(el, n, 1100, function(v){ el.textContent = Math.round(v); });
+
+  /* ---------- remember the last place the student was ---------- */
+  function noteLast(page, parts){
+    var h = location.hash, label = null;
+    if (page === 'practice' && parts[0]) { var s1 = subj(parts[0]); if (s1) label = s1.short + ' practice quiz'; }
+    else if (page === 'study' && parts[1]) { var s2 = subj(parts[0]); if (s2) { var r = topicOf(s2, parts[1]); if (r[0]) label = r[0].title; } }
+    else if (page === 'cards' && parts[0]) { var s3 = subj(parts[0]); if (s3) label = s3.short + ' flashcards'; }
+    else if (page === 'essay' && parts[0]) { label = 'your practice essay'; }
+    if (label) store.set('last', {h:h, label:label, t:Date.now()});
+  }
+  function continueHTML(){
+    var l = store.get('last', null);
+    if (!l || !l.h || !l.label) return '';
+    return '<a class="btn btn-primary" href="'+l.h+'">Continue where you left off</a>';
   }
 
   /* ---------- confetti ---------- */
@@ -152,6 +160,7 @@
     else if (page === 'help') renderHelp();
     else if (window.EXTRA && window.EXTRA[page]) window.EXTRA[page](parts.slice(1));
     else renderHome(false);
+    noteLast(page, parts.slice(1));
     if (page !== 'quote') window.scrollTo(0,0);
   }
   window.addEventListener('hashchange', route);
@@ -164,9 +173,9 @@
         '<span class="eyebrow">GED® tutoring and free study tools · Minneapolis</span>',
         '<h1>Your GED, <em>one calm step at a time.</em></h1>',
         '<p class="lede">Free study guides, practice tests, and the resources that actually helped me pass, plus one-on-one tutoring for adults in Minneapolis and St. Paul when you want someone beside you.</p>',
-        '<div class="hero-actions"><a class="btn btn-primary" href="#/study">Start studying free</a><a class="btn btn-ghost" href="#/quote">Get a tutoring quote</a></div>',
+        heroActions(),
         countdownHTML(),
-        '<div class="tiny-facts"><span>No account needed</span><span>Progress saved on this device</span><span>First 30 minutes of tutoring free</span></div>',
+        '<p class="trust">Free. No signup. Scores stay on your device.</p>',
       '</div>',
       '<div class="stage-wrap"><div class="stage" id="stage" aria-hidden="true"><div class="ring" id="ring"></div></div><div class="stage-cap"><span class="stage-week" id="stage-week">Week 1</span><span class="stage-line" id="stage-line">Three practice tests. All under 145.</span><button class="btn-text stage-replay" id="stage-replay" hidden>Replay ↻</button></div></div>',
     '</section>',
@@ -189,7 +198,6 @@
     quoteHTML()
     ].join('');
     bindQuote();
-    startCountdown();
     initStage();
     if (scrollQuote) { var q = $('#quote'); if (q) q.scrollIntoView(); }
   }
@@ -254,6 +262,12 @@
     at(T + 3900, function(){ line.textContent = 'Math 132 → 152 · Science 141 → 166 · Language Arts 139 → 158'; replay.hidden = false; startDrift(cards, ring, stage); });
     requestAnimationFrame(frame);
     replay.onclick = function(){ initStage(); };
+  }
+  function heroActions(){
+    var cont = continueHTML();
+    if (cont) return '<div class="hero-actions">' + cont + '<a class="btn btn-ghost" href="#/study">Browse all subjects</a></div>' +
+      '<p class="hero-note last-note">Last stop: ' + esc(store.get('last', {}).label || '') + '</p>';
+    return '<div class="hero-actions"><a class="btn btn-primary" href="#/study">Start studying free</a><a class="btn btn-ghost" href="#/quote">Get a tutoring quote</a></div>';
   }
   function feature(href, k, h, p, go){ return '<a class="feature" href="'+href+'"><span class="k">'+k+'</span><h3>'+h+'</h3><p>'+p+'</p><span class="go">'+go+' →</span></a>'; }
 
