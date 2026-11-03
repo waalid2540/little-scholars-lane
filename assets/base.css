@@ -88,7 +88,7 @@
   .ba-tag{position:absolute;top:10px;left:10px;font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:var(--cinnamon-soft);color:var(--cinnamon)}
   .ba-tag.after{background:var(--pine-soft);color:var(--pine)}
   .ba h3{font-size:1.9rem;margin:0 0 8px}
-  .ba p{font-size:1rem;color:var(--ink-soft)}
+  .ba p{font-size:1rem;color:var(--ink);line-height:1.55}
   .ba-grade{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-weight:600;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cinnamon)}
 
   /* study materials */
@@ -132,7 +132,7 @@
   .svc .icon{display:none}
   .svc h3{font-size:1.7rem;margin-top:4px}
   .svc .grades{font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
-  .svc p{color:var(--ink-soft);font-size:.95rem;flex:1}
+  .svc p{color:var(--ink);font-size:1rem;line-height:1.55;flex:1}
   .svc .price{display:flex;align-items:baseline;gap:6px;margin-top:6px;padding-top:12px;border-top:1px dashed var(--line);font-variant-numeric:tabular-nums}
   .svc .price strong{font-family:"Cormorant Garamond",Georgia,serif;font-size:2rem;font-weight:600;color:var(--ink)}
   .svc .price span{color:var(--ink-soft);font-size:.9rem;font-weight:600}
@@ -146,7 +146,7 @@
   .step{position:relative;text-align:center;padding:0 10px}
   .step .num{width:56px;height:56px;border-radius:50%;background:var(--ground);color:var(--cinnamon);display:grid;place-items:center;margin:0 auto 14px;font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:1.5rem;border:1px solid var(--cinnamon);position:relative;z-index:1;box-shadow:0 0 0 8px var(--ground)}
   .step h3{font-size:1.6rem;margin-bottom:6px}
-  .step p{color:var(--ink-soft);font-size:.95rem}
+  .step p{color:var(--ink);font-size:1rem;line-height:1.55}
 
   /* about */
   .about{display:grid;grid-template-columns:.9fr 1.1fr;gap:36px;align-items:center}

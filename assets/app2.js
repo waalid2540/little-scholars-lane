@@ -152,7 +152,8 @@
   function renderCards(parts){
     if (parts[0] && CARDS[parts[0]]) return cardDeck(parts[0]);
     app.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Flashcards</span><h1>Ten minutes on the bus</h1><p>The terms, formulas, and facts that come up most, one card at a time. Tap to flip, then mark it "got it" or "not yet." Cards you miss come back more often. Progress saves on this device.</p></div>' +
-      '<div class="subject-grid">' + ids.map(function(id){ var st = stats(id); return '<a class="subject '+st.s.cls+'" href="#/cards/'+id+'"><h3>'+st.s.name+'</h3><div class="meta"><span>'+st.cards+' cards</span><span>'+st.mastered+' mastered</span></div><p>'+(id==='math'?'Formulas, fraction rules, and calculator traps.':id==='rla'?'Grammar rules, question types, and the essay template.':id==='science'?'Variables, cells, forces, and earth basics.':'Amendments, branches, eras, and economics terms.')+'</p><span class="count">Open deck →</span></a>'; }).join('') + '</div></div>';
+      '<div class="subject-grid">' + ids.map(function(id){ var st = stats(id); return L.subjectCard({cls:st.s.cls, icon:id, href:'#/cards/'+id, title:st.s.name, pct:st.cards?st.mastered/st.cards*100:0, ringLabel:'cards mastered',
+        meta:[st.mastered+' of '+st.cards+' mastered'], body:(id==='math'?'Formulas, fraction rules, and calculator traps.':id==='rla'?'Grammar rules, question types, and the essay template.':id==='science'?'Variables, cells, forces, and earth basics.':'Amendments, branches, eras, and economics terms.'), bigN:st.cards, bigLabel:'cards', go:'Open deck'}); }).join('') + '</div></div>';
   }
   function cardDeck(sid){
     var s = subj(sid), deck = CARDS[sid], st = store.get('cards', {}); st[sid] = st[sid] || {};

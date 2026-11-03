@@ -13,7 +13,22 @@
   function subj(id){ for (var i=0;i<SUBJECTS.length;i++) if (SUBJECTS[i].id===id) return SUBJECTS[i]; return null; }
   function topicOf(s, tid){ for (var i=0;i<s.topics.length;i++) if (s.topics[i].id===tid) return [s.topics[i], i]; return [null,-1]; }
   function doneSet(){ return store.get('done', {}); }
-  window.LSL = {$:$, app:app, store:store, esc:esc, subj:subj, topicOf:topicOf, doneSet:doneSet, attempts:function(){ return store.get('attempts', []); }};
+  var ICONS = {
+    math:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="2.5" width="16" height="19" rx="3"/><rect x="7.5" y="6" width="9" height="3.6" rx="1"/><circle cx="8.6" cy="13.6" r=".95" fill="currentColor" stroke="none"/><circle cx="12" cy="13.6" r=".95" fill="currentColor" stroke="none"/><circle cx="15.4" cy="13.6" r=".95" fill="currentColor" stroke="none"/><circle cx="8.6" cy="17.6" r=".95" fill="currentColor" stroke="none"/><circle cx="12" cy="17.6" r=".95" fill="currentColor" stroke="none"/><circle cx="15.4" cy="17.6" r=".95" fill="currentColor" stroke="none"/></svg>',
+    rla:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.6C10.5 5.1 8.5 4.4 4 4.4v13.3c4.5 0 6.5.7 8 2.2 1.5-1.5 3.5-2.2 8-2.2V4.4c-4.5 0-6.5.7-8 2.2z"/><path d="M12 6.6v13.3"/></svg>',
+    science:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.4 3h5.2"/><path d="M10.6 3v6.3L5.4 18a2 2 0 0 0 1.7 3h9.8a2 2 0 0 0 1.7-3l-5.2-8.7V3"/><path d="M7.7 14.6h8.6"/></svg>',
+    social:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.6 12 4l9 5.6"/><path d="M5.6 9.6V18M9.9 9.6V18M14.1 9.6V18M18.4 9.6V18"/><path d="M3 21h18"/></svg>'
+  };
+  function ring(pct, label){ var p = Math.max(0, Math.min(100, Math.round(pct||0))); return '<span class="sring" style="--p:'+p+'" role="img" aria-label="'+label+' '+p+' percent"><i>'+p+'%</i></span>'; }
+  function subjectCard(o){
+    return '<a class="subject '+o.cls+'" href="'+o.href+'">' +
+      '<div class="sub-top"><span class="sub-icon">'+(ICONS[o.icon]||'')+'</span>'+ring(o.pct, o.ringLabel||'progress')+'</div>' +
+      '<h3>'+o.title+'</h3>' +
+      '<div class="meta">'+(o.meta||[]).map(function(m){ return '<span>'+m+'</span>'; }).join('')+'</div>' +
+      '<p>'+o.body+'</p>' +
+      '<div class="sub-foot"><span class="sub-big"><b>'+o.bigN+'</b><span>'+o.bigLabel+'</span></span><span class="sub-go">'+o.go+' →</span></div></a>';
+  }
+  window.LSL = {$:$, app:app, store:store, esc:esc, subj:subj, topicOf:topicOf, doneSet:doneSet, attempts:function(){ return store.get('attempts', []); }, subjectCard:subjectCard, ring:ring, ICONS:ICONS};
 
   /* ---------- router ---------- */
   function route(){
@@ -22,7 +37,7 @@
     var page = parts[0] || 'home';
     document.querySelectorAll('.nav-links a').forEach(function(a){
       var key = a.getAttribute('data-route');
-      var alias = {cards:'study', formulas:'study', testday:'study', essay:'practice'};
+      var alias = {cards:'study', formulas:'study', testday:'study', essay:'practice', progress:'progress'};
       a.classList.toggle('active', key === page || key === alias[page]);
     });
     if (quiz.timer) { clearInterval(quiz.timer); quiz.timer = null; }
@@ -175,7 +190,8 @@
     app.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Study guides</span><h1>Pick a subject</h1><p>Each guide walks through the skills on that test in plain language, with a worked example and a problem to try. Check off topics as you go; your progress is saved on this device.</p></div>' +
       '<div class="subject-grid">' + SUBJECTS.map(function(s){
         var n = progressFor(s);
-        return '<a class="subject '+s.cls+'" href="#/study/'+s.id+'"><h3>'+s.name+'</h3><div class="meta"><span>'+s.time+'</span><span>'+s.items+'</span></div><p>'+s.overview.split('. ')[0]+'.</p><span class="count">'+s.topics.length+' topics · '+n+' done</span></a>';
+        return subjectCard({cls:s.cls, icon:s.id, href:'#/study/'+s.id, title:s.name, pct:n/s.topics.length*100, ringLabel:'lessons done',
+          meta:[s.time, s.items], body:s.overview.split('. ')[0]+'.', bigN:s.topics.length, bigLabel:'lessons · '+n+' done', go:'Open'});
       }).join('') + '</div>' +
       '<div class="tool-row"><a class="tool" href="#/cards"><b>Flashcards</b><span>Terms and formulas, one at a time</span></a><a class="tool" href="#/formulas"><b>Formula sheet</b><span>What you get and what to memorize</span></a><a class="tool" href="#/essay"><b>Essay workspace</b><span>Timed extended response practice</span></a><a class="tool" href="#/testday"><b>Test day</b><span>What to bring, what to expect</span></a></div>' +
       '<div class="card soft" style="margin-top:36px"><h3 style="font-size:1.4rem;margin-bottom:8px">Not sure where to start?</h3><p class="muted">Take a 10-question practice test in each subject first. Then study the subject with the lowest score. Most people start with math, and that is fine too.</p><p style="margin-top:12px"><a class="btn btn-primary btn-sm" href="#/practice">Take a practice test</a></p></div></div>';
@@ -217,10 +233,23 @@
       '<div class="subject-grid">' + SUBJECTS.map(function(s){
         var n = QUESTIONS[s.id].length, best = null;
         attempts().forEach(function(a){ if (a.s===s.id && (best===null || a.pct>best)) best = a.pct; });
-        return '<a class="subject '+s.cls+'" href="#/practice/'+s.id+'"><h3>'+s.name+'</h3><div class="meta"><span>'+n+' questions available</span>'+(best!==null?'<span>Best: '+best+'%</span>':'')+'</div><p>'+s.overview.split('. ')[0]+'.</p><span class="count">Start a '+s.short+' quiz →</span></a>';
+        return subjectCard({cls:s.cls, icon:s.id, href:'#/practice/'+s.id, title:s.name, pct:best||0, ringLabel:'best score',
+          meta:[best!==null?'Best score '+best+'%':'Not attempted yet'], body:s.overview.split('. ')[0]+'.', bigN:n, bigLabel:'questions', go:'Start a '+s.short+' quiz'});
       }).join('') + '</div>' +
-      (at.length ? '<h2 style="font-size:1.8rem;margin:44px 0 14px">Your recent attempts</h2><div class="history">' + at.slice(0,8).map(function(a){ var s = subj(a.s); return '<div class="hist"><div><b>'+(s?s.name:a.s)+'</b><div class="small muted">'+new Date(a.t).toLocaleDateString()+' · '+a.n+' questions'+(a.timed?' · timed':'')+'</div></div><div class="pct '+(a.pct>=75?'good':a.pct<60?'low':'')+'">'+a.pct+'%</div></div>'; }).join('') + '</div>' : '<div class="card soft" style="margin-top:36px"><p class="muted">Your attempts will show up here. Scores stay on this device only.</p></div>') +
+      progressPanel(at) +
+      (at.length ? '<h2 style="font-size:1.8rem;margin:44px 0 14px">Your recent attempts</h2><div class="history">' + at.slice(0,8).map(function(a){ var s = subj(a.s); return '<div class="hist"><div><b>'+(s?s.name:a.s)+'</b><div class="small muted">'+new Date(a.t).toLocaleDateString()+' · '+a.n+' questions'+(a.timed?' · timed':'')+'</div></div><div class="pct '+(a.pct>=75?'good':a.pct<60?'low':'')+'">'+a.pct+'%</div></div>'; }).join('') + '</div>' : '') +
       '</div>';
+  }
+  function progressPanel(at){
+    var any = at.length > 0;
+    return '<section class="pstrip"><div class="pstrip-head"><h2>Your scores</h2><p>' +
+      (any ? 'Best score in each subject so far. Averaging 80% or better means it is time for the official GED Ready practice test.'
+           : 'Nothing here yet. Take one 10-question quiz in each subject to find your starting point. It takes about 15 minutes and nothing is graded but you.') +
+      '</p></div><div class="pstrip-rings">' + SUBJECTS.map(function(s){
+        var best = null; at.forEach(function(a){ if (a.s===s.id && (best===null || a.pct>best)) best = a.pct; });
+        var n = 0; at.forEach(function(a){ if (a.s===s.id) n++; });
+        return '<a class="pring '+s.cls+'" href="#/practice/'+s.id+'">'+ring(best||0, s.short+' best score')+'<b>'+s.short+'</b><span>'+(best===null?'Start here':n+' attempt'+(n===1?'':'s'))+'</span></a>';
+      }).join('') + '</div>' + (any ? '' : '<a class="btn btn-primary btn-sm" href="#/practice/math">Start with a math quiz</a>') + '</section>';
   }
   function renderQuizSetup(sid){
     var s = subj(sid); if (!s) return renderPractice();
