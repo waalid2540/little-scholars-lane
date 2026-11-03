@@ -1,7 +1,7 @@
 window.RESULTS_HTML = `<section id="progress" class="wrap">
     <div class="section-head">
-      <h2>Before &amp; after</h2>
-      <p>Practice score reports, study plans, and essays from students I’ve worked with, shared with their permission. Names changed, scores not.</p>
+      <h2>What progress looks like</h2>
+      <p><b>Illustrations, not real students.</b> These are mocked-up score reports showing the kind of jump a realistic GED timeline produces. Real results will replace them once students give permission to share theirs.</p>
     </div>
     <div class="ba-grid">
 

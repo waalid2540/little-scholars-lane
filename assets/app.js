@@ -170,14 +170,14 @@
     app.innerHTML = [
     '<section class="hero wrap">',
       '<div>',
-        '<span class="eyebrow">GED® tutoring and free study tools · Minneapolis</span>',
+        '<span class="eyebrow">Free GED study tools · Optional tutoring · Minneapolis</span>',
         '<h1>Your GED, <em>one calm step at a time.</em></h1>',
-        '<p class="lede">Free study guides, practice tests, and the resources that actually helped me pass, plus one-on-one tutoring for adults in Minneapolis and St. Paul when you want someone beside you.</p>',
+        '<p class="lede">Free study guides, practice tests, and the resources that actually moved my own practice scores, plus one-on-one tutoring for adults in Minneapolis and St. Paul when you want someone beside you.</p>',
         heroActions(),
         countdownHTML(),
-        '<p class="trust">Free. No signup. Scores stay on your device.</p>',
+        '<p class="trust">Every study tool here is free. No signup. Scores stay on your device.</p>',
       '</div>',
-      '<div class="stage-wrap"><div class="stage" id="stage" aria-hidden="true"><div class="ring" id="ring"></div></div><div class="stage-cap"><span class="stage-week" id="stage-week">Week 1</span><span class="stage-line" id="stage-line">Three practice tests. All under 145.</span><button class="btn-text stage-replay" id="stage-replay" hidden>Replay ↻</button></div></div>',
+      '<div class="stage-wrap"><div class="stage" id="stage" aria-hidden="true"><div class="ring" id="ring"></div></div><div class="stage-cap"><span class="stage-week" id="stage-week">Week 1</span><span class="stage-line" id="stage-line">Three practice tests. All under 145.</span><span class="stage-note">Illustration</span><button class="btn-text stage-replay" id="stage-replay" hidden>Replay ↻</button></div></div>',
     '</section>',
     '<section class="wrap" style="padding-top:0">',
       '<div class="feature-grid">',
@@ -208,7 +208,7 @@
     var stage = $('#stage'), ring = $('#ring'); if (!stage || !ring) return;
     var tmp = document.createElement('div'); tmp.innerHTML = window.RESULTS_HTML || '';
     var svgs = [].map.call(tmp.querySelectorAll('.ba-photo svg'), function(x){ return x.outerHTML; });
-    if (svgs.length < 6) { stage.parentNode.innerHTML = '<div class="sign"><h2>Ivory Study</h2><p>GED prep from someone who has sat in your seat.</p></div>'; return; }
+    if (svgs.length < 6) { stage.parentNode.innerHTML = '<div class="sign"><h2>Ivory Study</h2><p>GED prep from someone studying right alongside you.</p></div>'; return; }
     var pairs = [[svgs[0],svgs[1],'Math','132','152','Passed'],[svgs[2],svgs[3],'Science + Social','141','166','College Ready'],[svgs[4],svgs[5],'Language Arts','139','158','Passed']];
     ring.innerHTML = pairs.map(function(pr,i){ return '<div class="pcard" data-i="'+i+'"><div class="face front">'+pr[0]+'<span class="ptag">Before</span></div><div class="face back">'+pr[1]+'<span class="ptag after">After</span><span class="pscore">'+pr[3]+' → '+pr[4]+'<small>'+pr[5]+'</small></span></div></div>'; }).join('');
     var cards = [].slice.call(ring.children);
@@ -278,11 +278,11 @@
       ['GED subject 3 of 4','Science','Life, physical, and earth science through charts and short passages. More about reading data than memorizing facts.','$20','/ hour, from'],
       ['GED subject 4 of 4','Social Studies','Civics, U.S. history, economics, and geography, with a focus on reading documents, maps, and graphs.','$20','/ hour, from'],
       ['En español','GED in Spanish','The GED is offered in Spanish. Prep for any of the four subjects, taught in Spanish, with the Spanish-language formula sheet and vocabulary.','$25','/ hour, from'],
-      ['Single session','Test-day prep &amp; registration help','Setting up your GED account, scheduling at a Minneapolis test center or online, what to bring, and a calm plan for the morning of.','$20','/ session, flat']
+      ['Single session','Test-day prep &amp; registration help','Setting up your GED account, scheduling at a Minneapolis test center or online, what to bring, and a calm plan for the morning of.','$20','for one 60-minute session']
     ];
-    return '<section id="services" class="services"><div class="wrap"><div class="section-head"><div><h2>Tutoring: subjects &amp; starting prices</h2><p>The study tools on this site are free. When you want a person, everyone gets a quote. Price depends on the subject, where you’re starting, and how soon your test date is. The first 30 minutes are always free.</p></div><span class="price-note">From $20 an hour</span></div><div class="svc-grid">' +
+    return '<section id="services" class="services"><div class="wrap"><p class="paywall-note"><b>Everything above is free.</b> No account, no trial, no card. Tutoring below is the only paid part of Ivory Study, and it is billed by the hour, not as access to this site.</p><div class="section-head"><div><h2>Tutoring: subjects &amp; hourly rates</h2><p>Price depends on the subject, where you’re starting, and how soon your test date is. The first 30 minutes are always free.</p></div><span class="price-note">From $20 per hour</span></div><div class="svc-grid">' +
       svc.map(function(s){ return '<article class="svc"><span class="grades">'+s[0]+'</span><h3>'+s[1]+'</h3><p>'+s[2]+'</p><div class="price"><strong>'+s[3]+'</strong><span>'+s[4]+'</span></div></article>'; }).join('') +
-      '</div><p class="fine">Starting prices are for a 60-minute in-person or online session. Pairs studying the same subject split the hour at 15% off each. Test fees are paid to the testing service separately and are not included.</p></div></section>';
+      '</div><p class="fine">All rates are per 60-minute session, in person or online. There is no one-time fee and no subscription for the study tools, and paying for a session never unlocks anything here, because nothing here is locked. Pairs studying the same subject split the hour at 15% off each. GED test fees go to the testing service and are not included.</p></div></section>';
   }
   function howHTML(){
     return '<section id="how" class="wrap"><div class="section-head"><h2>How tutoring works</h2><p>Three steps, and most people start within a week.</p></div><div class="steps">' +
@@ -292,10 +292,10 @@
       '</div></section>';
   }
   function aboutHTML(){
-    return '<section id="about" class="wrap"><div class="about"><div class="about-card">'+(window.ABOUT_SVG||'')+'</div><div><h2>Hi, I’m Aisha. I passed the GED too.</h2>' +
-      '<p>Not long ago I was the one studying for this test, bouncing between websites, apps, and videos until I found the few that actually worked. I started Ivory Study so the next person doesn’t have to search that hard, and so they have someone patient sitting next to them while they do it.</p>' +
-      '<p>Sessions are one-on-one unless you bring a study partner. I know the current test from the inside, I use the official practice tests to track your progress, and I build your plan around your actual week, not an ideal one.</p>' +
-      '<div class="pills"><span class="pill">Passed the GED myself</span><span class="pill">Knows the current test</span><span class="pill">Minneapolis based</span><span class="pill">Fluent in Spanish</span></div></div></div></section>';
+    return '<section id="about" class="wrap"><div class="about"><div class="about-card">'+(window.ABOUT_SVG||'')+'</div><div><h2>Hi, I’m Aisha. I’m studying for it too.</h2>' +
+      '<p>I am preparing for the GED myself. I spent months bouncing between websites, apps, and videos before I found the few that actually worked, and I built this site out of those notes so the next person does not have to search that hard.</p>' +
+      '<p>Sessions are one-on-one unless you bring a study partner. I tutor the subjects I score strongest in on practice tests, I use the official practice tests to track your progress, and I build your plan around your actual week, not an ideal one. If a question is outside what I can teach well, I will say so and point you somewhere better.</p>' +
+      '<div class="pills"><span class="pill">Studying for the GED now</span><span class="pill">Knows the current test</span><span class="pill">Minneapolis based</span><span class="pill">Fluent in Spanish</span></div></div></div></section>';
   }
   function quoteHTML(){
     return '<section id="quote" class="wrap"><div class="quote"><div><h2>Get a quote</h2><p class="intro">Tell me where you’re starting and I’ll send a price and a few open times within one business day.</p><ul><li>No commitment, no card needed</li><li>First 30 minutes are free</li><li>Pause anytime for work, family, or life</li></ul></div>' +
