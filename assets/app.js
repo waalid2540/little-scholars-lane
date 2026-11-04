@@ -171,7 +171,7 @@
       '<p>'+o.body+'</p>' +
       '<div class="sub-foot"><span class="sub-big"><b>'+o.bigN+'</b><span>'+o.bigLabel+'</span></span><span class="sub-go">'+o.go+' →</span></div></a>';
   }
-  window.LSL = {$:$, app:app, store:store, esc:esc, subj:subj, topicOf:topicOf, doneSet:doneSet, attempts:function(){ return store.get('attempts', []); }, subjectCard:subjectCard, ring:ring, ICONS:ICONS, estScore:estScore, band:band, readinessHTML:readinessHTML, weakSkills:weakSkills};
+  window.LSL = {$:$, app:app, store:store, esc:esc, subj:subj, topicOf:topicOf, doneSet:doneSet, attempts:function(){ return store.get('attempts', []); }, subjectCard:subjectCard, ring:ring, ICONS:ICONS, estScore:estScore, band:band, readinessHTML:readinessHTML, weakSkills:weakSkills, streakHTML:streakHTML, lessonMinutes:lessonMinutes};
 
   var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -190,10 +190,19 @@
     else if (page === 'study') { if (parts.length === 1) renderStudy(); else if (parts.length === 2) renderSubject(parts[1]); else renderTopic(parts[1], parts[2]); }
     else if (page === 'practice') { if (parts.length === 1) renderPractice(); else renderQuizSetup(parts[1]); }
     else if (page === 'drill') { if (parts.length === 1) renderDrill(); else startDrill(parts[1]); }
+    else if (page === 'start') renderStart();
+    else if (page === 'resume') { if (!resumeQuiz()) location.replace('#/practice'); return; }
+    else if (page === 'search') renderSearch(parts[1] ? decodeURIComponent(parts[1]) : '');
+    else if (page === 'transfer') renderTransfer();
     else if (page === 'resources') renderResources();
     else if (page === 'help') renderHelp();
     else if (window.EXTRA && window.EXTRA[page]) window.EXTRA[page](parts.slice(1));
     else renderHome(false);
+    var tabAlias = {cards:'study', formulas:'study', testday:'study', essay:'practice', start:'practice', resume:'practice', transfer:'progress', plan:'progress'};
+    document.querySelectorAll('.tabbar a').forEach(function(a){
+      var k = a.getAttribute('data-tab');
+      a.classList.toggle('on', k === page || k === tabAlias[page]);
+    });
     noteLast(page, parts.slice(1));
     if (page !== 'quote') window.scrollTo(0,0);
   }
@@ -298,10 +307,17 @@
     replay.onclick = function(){ initStage(); };
   }
   function heroActions(){
+    var p = savedQuiz();
+    if (p) {
+      var done = Object.keys(p.ans || {}).length;
+      return '<div class="hero-actions"><a class="btn btn-primary btn-big" href="#/resume">Resume your quiz</a><a class="btn btn-ghost" href="#/study">Browse all subjects</a></div>' +
+        '<p class="hero-note last-note">' + esc(p.name || 'Quiz') + ', question ' + ((p.i||0)+1) + ' of ' + p.qi.length + ' &middot; ' + done + ' answered</p>';
+    }
     var cont = continueHTML();
     if (cont) return '<div class="hero-actions">' + cont + '<a class="btn btn-ghost" href="#/study">Browse all subjects</a></div>' +
       '<p class="hero-note last-note">Last stop: ' + esc(store.get('last', {}).label || '') + '</p>';
-    return '<div class="hero-actions"><a class="btn btn-primary" href="#/study">Start studying free</a><a class="btn btn-ghost" href="#/quote">Get a tutoring quote</a></div>';
+    return '<div class="hero-actions"><a class="btn btn-primary btn-big" href="#/start">Start here &middot; 10 questions</a><a class="btn btn-ghost" href="#/study">Browse the guides</a></div>' +
+      '<p class="hero-note">Ten questions tell you which subject needs you most. About 20 minutes.</p>';
   }
   function feature(href, k, h, p, go){ return '<a class="feature" href="'+href+'"><span class="k">'+k+'</span><h3>'+h+'</h3><p>'+p+'</p><span class="go">'+go+' →</span></a>'; }
 
@@ -368,8 +384,9 @@
     app.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Study guides</span><h1>Pick a subject</h1><p>Each guide walks through the skills on that test in plain language, with a worked example and a problem to try. Check off topics as you go; your progress is saved on this device.</p></div>' +
       '<div class="subject-grid">' + SUBJECTS.map(function(s){
         var n = progressFor(s);
+        var mins = s.topics.reduce(function(a,t){ return a + lessonMinutes(t); }, 0);
         return subjectCard({cls:s.cls, icon:s.id, href:'#/study/'+s.id, title:s.name, pct:n/s.topics.length*100, ringLabel:'lessons done',
-          meta:[s.time, s.items], body:s.overview.split('. ')[0]+'.', bigN:s.topics.length, bigLabel:'lessons · '+n+' done', go:'Open'});
+          meta:['about '+mins+' min to read', 'test is '+s.time], body:s.overview.split('. ')[0]+'.', bigN:s.topics.length, bigLabel:'lessons · '+n+' done', go:'Open'});
       }).join('') + '</div>' +
       '<div class="tool-row"><a class="tool" href="#/cards"><b>Flashcards</b><span>Terms and formulas, one at a time</span></a><a class="tool" href="#/formulas"><b>Formula sheet</b><span>What you get and what to memorize</span></a><a class="tool" href="#/essay"><b>Essay workspace</b><span>Timed extended response practice</span></a><a class="tool" href="#/testday"><b>Test day</b><span>What to bring, what to expect</span></a></div>' +
       '<div class="card soft" style="margin-top:36px"><h3 style="font-size:1.4rem;margin-bottom:8px">Not sure where to start?</h3><p class="muted">Take a 10-question practice test in each subject first. Then study the subject with the lowest score. Most people start with math, and that is fine too.</p><p style="margin-top:12px"><a class="btn btn-primary btn-sm" href="#/practice">Take a practice test</a></p></div></div>';
@@ -382,7 +399,7 @@
       '<p class="small muted" style="margin-bottom:14px">'+s.tools+'.</p>' +
       '<div class="topic-list">' + s.topics.map(function(t){
         var done = d[s.id+'/'+t.id];
-        return '<a class="topic" href="#/study/'+s.id+'/'+t.id+'"><span class="n"></span><div><h3>'+t.title+'</h3><p>'+t.summary+'</p>'+(done?'<span class="done">✓ Done</span>':'')+'</div><span class="arrow">→</span></a>';
+        return '<a class="topic" href="#/study/'+s.id+'/'+t.id+'"><span class="n"></span><div><h3>'+t.title+'</h3><p>'+t.summary+'</p><span class="pill-time">'+lessonMinutes(t)+' min read</span>'+(done?' <span class="done">✓ Done</span>':'')+'</div><span class="arrow">→</span></a>';
       }).join('') + '</div>' +
       '<div class="lesson-nav"><a class="btn btn-ghost" href="#/study">All subjects</a><a class="btn btn-primary" href="#/practice/'+s.id+'">Practice '+s.short+' →</a></div></div>';
   }
@@ -391,7 +408,7 @@
     var r = topicOf(s, tid), t = r[0], i = r[1]; if (!t) return renderSubject(sid);
     var prev = s.topics[i-1], next = s.topics[i+1];
     var key = s.id+'/'+t.id, done = !!doneSet()[key];
-    app.innerHTML = '<div class="wrap '+s.cls+'"><div class="page-head" style="padding-bottom:10px"><div class="crumbs"><span><a href="#/study">Study guides</a></span><span><a href="#/study/'+s.id+'">'+s.short+'</a></span><span>'+t.title+'</span></div><h1>'+t.title+'</h1><p>'+t.summary+'</p></div>' +
+    app.innerHTML = '<div class="wrap '+s.cls+'"><div class="page-head" style="padding-bottom:10px"><div class="crumbs"><span><a href="#/study">Study guides</a></span><span><a href="#/study/'+s.id+'">'+s.short+'</a></span><span>'+t.title+'</span></div><h1>'+t.title+'</h1><p>'+t.summary+'</p><div class="meta-row"><span class="pill-time">'+lessonMinutes(t)+' min read</span><span class="pill-time">1 worked example</span><span class="pill-time">1 to try yourself</span></div></div>' +
       '<div class="lesson"><div class="lesson-body">' + t.learn.join('') +
         '<div class="example"><div class="lbl">Worked example</div><div class="prob">'+t.example.problem+'</div><ol>'+t.example.steps.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol><div class="ans">Answer: '+t.example.answer+'</div></div>' +
         '<div class="tryit" id="tryit"><div class="lbl">Try it yourself</div><div class="q">'+t.tryIt.q+'</div><button class="btn btn-ghost btn-sm" id="reveal">Show the answer</button><div class="reveal"><b>'+t.tryIt.answer+'</b><p class="muted" style="margin-top:6px">'+t.tryIt.explain+'</p></div></div>' +
@@ -405,6 +422,31 @@
 
   /* ---------- practice ---------- */
   var quiz = {timer:null};
+  function saveQuizState(){
+    var st = quiz.state; if (!st) { return; }
+    try {
+      var qi = st.qs.map(function(q,k){ var sid = st.diag ? st.diag[k] : st.s.id; var arr = QUESTIONS[sid] || []; return [sid, arr.indexOf(q)]; });
+      if (qi.some(function(x){ return x[1] < 0; })) return;
+      store.set('inprogress', {sid:st.s.id, name:st.s.name, short:st.s.short, cls:st.s.cls, qi:qi, ans:st.ans, flags:st.flags, i:st.i, timed:st.timed, left:st.left, drill:!!st.drill, diag:st.diag, t:Date.now()});
+    } catch(e){}
+  }
+  function clearQuizState(){ store.set('inprogress', null); }
+  function savedQuiz(){
+    var p = store.get('inprogress', null);
+    if (!p || !p.qi || !p.qi.length) return null;
+    if (Date.now() - (p.t||0) > 14*86400000) { clearQuizState(); return null; }
+    return p;
+  }
+  function resumeQuiz(){
+    var p = savedQuiz(); if (!p) return false;
+    var qs = p.qi.map(function(x){ return (QUESTIONS[x[0]]||[])[x[1]]; });
+    if (qs.some(function(q){ return !q; })) { clearQuizState(); return false; }
+    var s = subj(p.sid) || {id:p.sid, name:p.name, short:p.short, cls:p.cls, overview:''};
+    quiz.state = {s:s, qs:qs, i:p.i||0, ans:p.ans||{}, flags:p.flags||{}, timed:p.timed, left:p.left, started:Date.now(), drill:p.drill, diag:p.diag};
+    if (p.timed) quiz.timer = setInterval(function(){ var st = quiz.state; if (!st) return; st.left--; var el = $('#timer'); if (el) { el.textContent = fmt(st.left); el.classList.toggle('warn', st.left < 120); } if (st.left <= 0) finishQuiz(); }, 1000);
+    renderQuestion();
+    return true;
+  }
   function attempts(){ return store.get('attempts', []); }
   function renderPractice(){
     var at = attempts().slice().reverse();
@@ -413,7 +455,7 @@
         var n = QUESTIONS[s.id].length, best = null;
         attempts().forEach(function(a){ if (a.s===s.id && (best===null || a.pct>best)) best = a.pct; });
         return subjectCard({cls:s.cls, icon:s.id, href:'#/practice/'+s.id, title:s.name, pct:best||0, ringLabel:'best score',
-          meta:[best!==null?'Best score '+best+'%':'Not attempted yet'], body:s.overview.split('. ')[0]+'.', bigN:n, bigLabel:'questions', go:'Start a '+s.short+' quiz'});
+          meta:[(best!==null?'Best score '+best+'%':'Not attempted yet'), '10 questions ≈ '+quizMinutes(s.id,10)+' min'], body:s.overview.split('. ')[0]+'.', bigN:n, bigLabel:'questions', go:'Start a '+s.short+' quiz'});
       }).join('') + '</div>' +
       (SUBJECTS.some(function(s){ return weakSkills(s.id).length; }) ? '<a class="drill-cta" href="#/drill"><b>Drill your weak spots</b><span>Five questions on exactly what you have missed, not another full test. →</span></a>' : '') +
       progressPanel(at) +
@@ -435,7 +477,7 @@
     var s = subj(sid); if (!s) return renderPractice();
     var total = QUESTIONS[s.id].length;
     app.innerHTML = '<div class="wrap '+s.cls+'"><div class="page-head" style="padding-bottom:16px"><div class="crumbs"><span><a href="#/practice">Practice tests</a></span><span>'+s.name+'</span></div><h1>'+s.name+' practice</h1><p>'+total+' questions in the bank. Choose how many and whether to use a timer. The timer gives you about the same time per question as the real test.</p></div>' +
-      '<div class="setup"><div class="card"><div class="opt-group"><label class="lbl">How many questions</label><div class="chip-row" id="count"><button class="chip on" data-n="10">10 questions</button><button class="chip" data-n="25">25 questions</button><button class="chip" data-n="'+total+'">All '+total+'</button></div></div>' +
+      '<div class="setup"><div class="card"><div class="opt-group"><label class="lbl">How many questions</label><div class="chip-row" id="count"><button class="chip on" data-n="10">10 questions · '+quizMinutes(s.id,10)+' min</button><button class="chip" data-n="25">25 · '+quizMinutes(s.id,25)+' min</button><button class="chip" data-n="'+total+'">All '+total+' · '+quizMinutes(s.id,total)+' min</button></div></div>' +
       '<div class="opt-group"><label class="lbl">Timer</label><div class="chip-row" id="timed"><button class="chip on" data-t="0">No timer</button><button class="chip" data-t="1">Timed</button></div></div>' +
       '<div class="opt-group"><label class="lbl">Order</label><div class="chip-row" id="shuffle"><button class="chip on" data-s="1">Shuffle</button><button class="chip" data-s="0">In order</button></div></div>' +
       '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-primary" id="start">Start the quiz</button><button class="btn btn-ghost" id="mock">Full-length timed mock</button></div></div>' +
@@ -458,7 +500,7 @@
     }
     qs = qs.slice(0, opts.n);
     var perQ = {math:150, rla:100, science:160, social:120}[s.id] || 120;
-    quiz.state = {s:s, qs:qs, i:0, ans:{}, flags:{}, timed:opts.timed, left:perQ*qs.length, started:Date.now(), drill:!!opts.drill};
+    quiz.state = {s:s, qs:qs, i:0, ans:{}, flags:{}, timed:opts.timed, left:perQ*qs.length, started:Date.now(), drill:!!opts.drill, diag:opts.diagnostic || null};
     if (opts.timed) quiz.timer = setInterval(function(){ var st = quiz.state; if (!st) return; st.left--; var el = $('#timer'); if (el) { el.textContent = fmt(st.left); el.classList.toggle('warn', st.left < 120); } if (st.left <= 0) finishQuiz(); }, 1000);
     renderQuestion();
   }
@@ -477,29 +519,35 @@
       '<div class="dots">' + st.qs.map(function(_,k){ return '<button class="dot'+(st.ans[k]!==undefined?' a':'')+(st.flags[k]?' f':'')+(k===st.i?' cur':'')+'" data-j="'+k+'">'+(k+1)+'</button>'; }).join('') + '</div>' +
       (st.i===n-1 && answered<n ? '<p class="small muted" style="margin-top:12px">You have '+(n-answered)+' unanswered question'+(n-answered>1?'s':'')+'. You can still finish; blanks count as wrong.</p>' : '') +
       '</div>';
-    $('.choices').addEventListener('click', function(e){ var b = e.target.closest('.choice'); if (!b) return; st.ans[st.i] = +b.dataset.k; renderQuestion(); });
+    $('.choices').addEventListener('click', function(e){ var b = e.target.closest('.choice'); if (!b) return; st.ans[st.i] = +b.dataset.k; saveQuizState(); renderQuestion(); });
     $('#flag').addEventListener('click', function(){ st.flags[st.i] = !st.flags[st.i]; renderQuestion(); });
-    if ($('#prev')) $('#prev').addEventListener('click', function(){ st.i--; renderQuestion(); });
-    if ($('#next')) $('#next').addEventListener('click', function(){ st.i++; renderQuestion(); });
+    if ($('#prev')) $('#prev').addEventListener('click', function(){ st.i--; saveQuizState(); renderQuestion(); });
+    if ($('#next')) $('#next').addEventListener('click', function(){ st.i++; saveQuizState(); renderQuestion(); });
     if ($('#finish')) $('#finish').addEventListener('click', finishQuiz);
-    $('#quit').addEventListener('click', function(){ if (confirm('Quit this quiz? Your answers will not be saved.')) { quiz.state = null; location.hash = '#/practice/'+s.id; } });
-    $('.dots').addEventListener('click', function(e){ var b = e.target.closest('.dot'); if (!b) return; st.i = +b.dataset.j; renderQuestion(); });
+    $('#quit').addEventListener('click', function(){ if (confirm('Quit this quiz? Your answers will not be saved.')) { quiz.state = null; clearQuizState(); location.hash = '#/practice'; } });
+    $('.dots').addEventListener('click', function(e){ var b = e.target.closest('.dot'); if (!b) return; st.i = +b.dataset.j; saveQuizState(); renderQuestion(); });
   }
   function finishQuiz(){
     if (quiz.timer) { clearInterval(quiz.timer); quiz.timer = null; }
     var st = quiz.state; if (!st) return;
+    clearQuizState();
     var s = st.s, n = st.qs.length, right = 0, skills = {};
-    var weak = store.get('weak', {}); weak[s.id] = weak[s.id] || {};
+    var weak = store.get('weak', {}), bySub = {};
     st.qs.forEach(function(q,k){
+      var sid = st.diag ? st.diag[k] : s.id;
+      weak[sid] = weak[sid] || {};
       var ok = st.ans[k] === q.a; if (ok) right++;
       skills[q.skill] = skills[q.skill] || {r:0,t:0}; skills[q.skill].t++; if (ok) skills[q.skill].r++;
-      if (!ok) weak[s.id][q.skill] = Math.min(9, (weak[s.id][q.skill] || 0) + 1);
-      else if (weak[s.id][q.skill]) { weak[s.id][q.skill]--; if (!weak[s.id][q.skill]) delete weak[s.id][q.skill]; }
+      bySub[sid] = bySub[sid] || {r:0,t:0}; bySub[sid].t++; if (ok) bySub[sid].r++;
+      if (!ok) weak[sid][q.skill] = Math.min(9, (weak[sid][q.skill] || 0) + 1);
+      else if (weak[sid][q.skill]) { weak[sid][q.skill]--; if (!weak[sid][q.skill]) delete weak[sid][q.skill]; }
+      if (!Object.keys(weak[sid]).length) delete weak[sid];
     });
-    if (!Object.keys(weak[s.id]).length) delete weak[s.id];
     store.set('weak', weak);
+    bumpGoal(st.qs.length);
+    if (st.diag) { var at2 = attempts(); Object.keys(bySub).forEach(function(sid){ var v = bySub[sid]; at2.push({s:sid, n:v.t, r:v.r, pct:Math.round(v.r/v.t*100), t:Date.now(), timed:false, diag:true}); }); store.set('attempts', at2.slice(-40)); }
     var pct = Math.round(right/n*100);
-    if (!st.drill) { var at = attempts(); at.push({s:s.id, n:n, r:right, pct:pct, t:Date.now(), timed:!!st.timed}); store.set('attempts', at.slice(-40)); }
+    if (!st.drill && !st.diag) { var at = attempts(); at.push({s:s.id, n:n, r:right, pct:pct, t:Date.now(), timed:!!st.timed}); store.set('attempts', at.slice(-40)); }
     var msg = pct>=85 ? 'Strong. If this holds up over a few quizzes, you are ready for the official GED Ready practice test in '+s.short+'.' : pct>=75 ? 'On track. Review the misses below, then try the full set. Above 75% consistently means you are close.' : pct>=60 ? 'Getting there. Focus your studying on the skills with the lowest bars below, then come back.' : 'A starting point, not a verdict. Work through the '+s.short+' study guide topic by topic, then try again. Most people start right here.';
     var weakest = Object.keys(skills).sort(function(a,b){ return (skills[a].r/skills[a].t) - (skills[b].r/skills[b].t); })[0];
     app.innerHTML = '<div class="wrap '+s.cls+'" style="padding-top:36px"><div class="crumbs"><span><a href="'+(st.drill?'#/drill':'#/practice')+'">'+(st.drill?'Weak-spot drills':'Practice tests')+'</a></span><span>'+s.name+'</span><span>Results</span></div>' +
@@ -509,10 +557,56 @@
       '<h2 style="font-size:1.8rem;margin:36px 0 4px">Review every question</h2><p class="muted">Read the explanations for the ones you missed, and for any you guessed.</p>' +
       '<div class="review">' + st.qs.map(function(q,k){ var ya = st.ans[k], ok = ya===q.a; return '<div class="rev '+(ok?'ok':'bad')+'"><div class="q-skill">'+(k+1)+' · '+q.skill+(st.flags[k]?' · flagged':'')+'</div><div class="q-text">'+q.q+'</div><div class="ya">Your answer: <b>'+(ya===undefined?'(blank)':'ABCD'[ya]+'. '+q.c[ya])+'</b>'+(ok?' ✓':'')+'</div>'+(!ok?'<div class="ya">Correct answer: <b>'+'ABCD'[q.a]+'. '+q.c[q.a]+'</b></div>':'')+'<div class="ex">'+q.e+'</div></div>'; }).join('') + '</div>' +
       '<div class="lesson-nav"><a class="btn btn-ghost" href="#/practice">All practice tests</a><a class="btn btn-primary" href="#/practice/'+s.id+'">Take another '+s.short+' quiz</a></div></div>';
+    if (st.diag) {
+      var order = Object.keys(bySub).sort(function(a,b){ return (bySub[a].r/bySub[a].t) - (bySub[b].r/bySub[b].t); });
+      var weakest = subj(order[0]);
+      $('.score-hero').insertAdjacentHTML('afterend',
+        '<div class="diag-next"><h2>Start with ' + weakest.name + '</h2>' +
+        '<p>You scored lowest there: ' + bySub[order[0]].r + ' of ' + bySub[order[0]].t + '. That is where your study time buys the most.</p>' +
+        '<div class="diag-grid">' + order.map(function(sid){ var v = bySub[sid], sb = subj(sid), p = Math.round(v.r/v.t*100);
+          var word = p >= 100 ? 'All correct' : p >= 50 ? 'Mixed' : 'Needs work';
+          return '<a class="diag-sub" href="#/study/'+sid+'"><b>'+sb.short+'</b><span>'+v.r+' of '+v.t+' right</span><span class="diag-est">'+word+'</span></a>'; }).join('') + '</div>' +
+        '<p class="small muted" style="margin-top:14px">A few questions per subject points you in a direction; it is not a score. Take a full 10-question quiz in a subject to get an estimated GED score you can lean on.</p>' +
+        '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px"><a class="btn btn-primary" href="#/study/'+order[0]+'">Open the '+weakest.short+' guide</a><a class="btn btn-ghost" href="#/plan">Build a study plan</a></div></div>');
+    }
     quiz.state = null;
     window.scrollTo(0,0);
     scanAnimated();
     if (pct >= 75) setTimeout(confetti, 420);
+  }
+
+  /* ---------- how long will this take ---------- */
+  function words(html){ var d = document.createElement('div'); d.innerHTML = html; return ((d.textContent||'').match(/\S+/g)||[]).length; }
+  function lessonMinutes(t){
+    var n = 0; t.learn.forEach(function(h){ n += words(h); });
+    n += words(t.example.problem) + t.example.steps.reduce(function(a,x){ return a + words(x); }, 0) + words(t.tryIt.q) + words(t.tryIt.explain);
+    return Math.max(4, Math.round(n / 110));
+  }
+  function quizMinutes(sid, n){ var per = {math:2.5, rla:1.8, science:2.2, social:2}[sid] || 2; return Math.max(2, Math.round(n * per)); }
+
+  /* ---------- daily streak ---------- */
+  function touchStreak(){
+    var st = store.get('streak', {days:0, last:null, today:0});
+    var today = new Date().toDateString();
+    if (st.last !== today) {
+      var y = new Date(Date.now() - 86400000).toDateString();
+      st.days = (st.last === y) ? st.days + 1 : 1;
+      st.last = today; st.today = 0;
+    }
+    store.set('streak', st); return st;
+  }
+  function bumpGoal(n){
+    var st = touchStreak(); st.today = (st.today || 0) + (n || 1); store.set('streak', st); return st;
+  }
+  function streakHTML(){
+    var st = store.get('streak', {days:0, last:null, today:0});
+    var today = new Date().toDateString();
+    var live = st.last === today ? st : {days:(st.last === new Date(Date.now()-86400000).toDateString() ? st.days : 0), today:0};
+    var goal = 10, done = Math.min(goal, live.today || 0);
+    return '<div class="streak"><div class="st-flame">'+(live.days > 0 ? live.days : '0')+'<small>day'+(live.days===1?'':'s')+' in a row</small></div>' +
+      '<div class="st-goal"><div class="st-top"><b>Today\u2019s goal</b><span>'+done+' of '+goal+' questions</span></div>' +
+      '<div class="bar"><i style="width:'+(done/goal*100)+'%"></i></div>' +
+      '<p class="small muted">'+(done >= goal ? 'Goal met. Anything more is a bonus.' : 'Answer '+(goal-done)+' more and today counts.')+'</p></div></div>';
   }
 
   /* ---------- listen to a lesson (device voice, no download) ---------- */
@@ -551,6 +645,26 @@
     window.addEventListener('hashchange', stop);
   }
 
+  /* ---------- Start here: a 10-question diagnostic across all four subjects ---------- */
+  function renderStart(){
+    app.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Start here</span><h1>Find out where you stand</h1><p>Ten questions, spread across all four GED subjects. Nothing is graded but you, and nothing is saved anywhere but this device. At the end you will see which subject needs you most and exactly what to do next.</p></div>' +
+      '<div class="setup"><div class="card"><div class="meta-row"><span class="pill-time">10 questions</span><span class="pill-time">about 20 minutes</span><span class="pill-time">no timer</span></div>' +
+      '<p style="margin:16px 0;color:var(--ink)">You will get two or three questions from each subject. Guess when you are unsure, the same as on the real test. There is no penalty for a wrong answer, and a wrong answer here is useful: it tells the site what to drill with you later.</p>' +
+      '<button class="btn btn-primary" id="go">Start the 10 questions</button></div>' +
+      '<div class="card soft"><h3 style="font-size:1.3rem;margin-bottom:10px">What happens after</h3><ul style="margin:0;padding-left:1.1rem;color:var(--ink);display:grid;gap:8px"><li>An estimated score for each subject on the 100 to 200 GED scale.</li><li>Your weakest subject, with a link straight into its first lesson.</li><li>Every question you missed is logged so the drill page can serve them back to you.</li></ul></div></div></div>';
+    $('#go').addEventListener('click', function(){
+      var pool = [];
+      SUBJECTS.forEach(function(sub){
+        var bank = QUESTIONS[sub.id].filter(function(q){ return !q.p; }).slice();
+        for (var i = bank.length-1; i>0; i--) { var j = Math.floor(Math.random()*(i+1)); var t = bank[i]; bank[i]=bank[j]; bank[j]=t; }
+        bank.slice(0, sub.id === 'math' ? 4 : 2).forEach(function(q){ pool.push({q:q, sid:sub.id}); });
+      });
+      pool = pool.slice(0, 10);
+      var fake = {id:'mixed', name:'Starting point', short:'Diagnostic', cls:'s-math', overview:''};
+      startQuiz(fake, {n:pool.length, timed:0, shuffle:0, pool:pool.map(function(x){ return x.q; }), diagnostic:pool.map(function(x){ return x.sid; })});
+    });
+  }
+
   /* ---------- weak-spot drill ---------- */
   function weakSkills(sid){
     var w = store.get('weak', {})[sid] || {};
@@ -580,6 +694,99 @@
     for (var i = head.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t = head[i]; head[i] = head[j]; head[j] = t; }
     if (!head.length) return renderDrill();
     startQuiz(s, {n:Math.min(5, head.length), timed:0, shuffle:0, pool:head, drill:true});
+  }
+
+  /* ---------- move progress to another device ---------- */
+  var SAVE_KEYS = ['done','attempts','cards','essays','plan','plan_done','weak','last','streak'];
+  function exportCode(){
+    var o = {v:1};
+    SAVE_KEYS.forEach(function(k){ var v = store.get(k, null); if (v !== null) o[k] = v; });
+    try { return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/=+$/,''); } catch(e){ return null; }
+  }
+  function importCode(code){
+    try {
+      var pad = code.trim().replace(/\s+/g,''); while (pad.length % 4) pad += '=';
+      var o = JSON.parse(decodeURIComponent(escape(atob(pad))));
+      if (!o || o.v !== 1) return false;
+      SAVE_KEYS.forEach(function(k){ if (o[k] !== undefined) store.set(k, o[k]); });
+      return true;
+    } catch(e){ return false; }
+  }
+  function renderTransfer(){
+    var code = exportCode();
+    app.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Move your progress</span><h1>Carry your progress to another device</h1><p>Ivory Study has no accounts and no server, so nothing you do here leaves your device. To study on your phone and your laptop, copy this code from one and paste it into the other.</p></div>' +
+      '<div class="setup"><div class="card"><h3 style="font-size:1.3rem;margin-bottom:6px">1. Copy from this device</h3><p class="small muted" style="margin-bottom:12px">This code holds your lessons done, quiz scores, flashcards, plan, essays, and streak. Email or text it to yourself.</p>' +
+      (code ? '<textarea id="xcode" readonly rows="4" style="font-family:ui-monospace,Menlo,monospace;font-size:.78rem">'+esc(code)+'</textarea><div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" id="xcopy">Copy code</button><span class="small muted" id="xmsg"></span></div>'
+             : '<p class="muted">Nothing saved on this device yet.</p>') + '</div>' +
+      '<div class="card"><h3 style="font-size:1.3rem;margin-bottom:6px">2. Paste into the other device</h3><p class="small muted" style="margin-bottom:12px">Open this page there and paste the code below. It replaces that device&rsquo;s progress with this one&rsquo;s.</p>' +
+      '<textarea id="icode" rows="4" placeholder="Paste your code here" style="font-family:ui-monospace,Menlo,monospace;font-size:.78rem"></textarea>' +
+      '<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center"><button class="btn btn-primary btn-sm" id="iload">Load this progress</button><span class="small muted" id="imsg"></span></div></div></div>' +
+      '<div class="card soft" style="margin-top:24px"><h3 style="font-size:1.2rem;margin-bottom:8px">Why not just a login?</h3><p class="muted">A real account that syncs by itself needs a server storing your data. This site is a set of files with no server behind it, which is also why it is free, needs no signup, and keeps your scores private to you. The code above does the same job by hand.</p></div></div>';
+    var cp = $('#xcopy');
+    if (cp) cp.addEventListener('click', function(){
+      var ta = $('#xcode'); ta.select(); ta.setSelectionRange(0, 99999);
+      var ok = false; try { ok = document.execCommand('copy'); } catch(e){}
+      if (!ok && navigator.clipboard) { navigator.clipboard.writeText(ta.value); ok = true; }
+      $('#xmsg').textContent = ok ? 'Copied. Send it to yourself.' : 'Select the text and copy it manually.';
+    });
+    $('#iload').addEventListener('click', function(){
+      var v = $('#icode').value;
+      if (!v.trim()) { $('#imsg').textContent = 'Paste a code first.'; return; }
+      if (!confirm('This replaces the progress saved on this device. Continue?')) return;
+      if (importCode(v)) { $('#imsg').textContent = 'Loaded. Opening your progress…'; setTimeout(function(){ location.hash = '#/progress'; }, 700); }
+      else $('#imsg').textContent = 'That code did not read correctly. Copy the whole thing and try again.';
+    });
+  }
+
+  /* ---------- search ---------- */
+  function searchIndex(){
+    var out = [];
+    SUBJECTS.forEach(function(s){
+      out.push({t:s.name+' study guide', d:s.overview.split('. ')[0]+'.', h:'#/study/'+s.id, k:'Guide', time:s.topics.length+' lessons'});
+      s.topics.forEach(function(tp){ out.push({t:tp.title, d:tp.summary, h:'#/study/'+s.id+'/'+tp.id, k:s.short+' lesson', time:lessonMinutes(tp)+' min'}); });
+      out.push({t:s.short+' practice quiz', d:'Questions in the style of the GED with an explanation for every answer.', h:'#/practice/'+s.id, k:'Practice', time:QUESTIONS[s.id].length+' questions'});
+      (CARDS[s.id]||[]).forEach(function(c){ out.push({t:c[0], d:c[1], h:'#/cards/'+s.id, k:s.short+' flashcard', time:''}); });
+    });
+    (window.RESOURCES||[]).forEach(function(r){ out.push({t:r.name, d:r.desc, h:'#/resources', k:'Resource', time:r.free}); });
+    [['Study plan','A week-by-week plan built around your test date.','#/plan','Tool','2 min to set up'],
+     ['Progress','Estimated score, lessons done, and weak spots.','#/progress','Tool',''],
+     ['Weak-spot drills','Five questions on exactly what you have missed.','#/drill','Tool','5 questions'],
+     ['Essay workspace','Timed extended-response practice with a rubric.','#/essay','Tool','45 min'],
+     ['Formula sheet','What the test gives you and what to memorize.','#/formulas','Tool','printable'],
+     ['Test day','Costs, OnVUE rules, ID, and what to expect.','#/testday','Guide','8 min'],
+     ['Help','Common questions answered in plain language.','#/help','Guide','']
+    ].forEach(function(x){ out.push({t:x[0], d:x[1], h:x[2], k:x[3], time:x[4]}); });
+    return out;
+  }
+  var INDEX = null;
+  function runSearch(q){
+    if (!INDEX) INDEX = searchIndex();
+    var terms = q.toLowerCase().split(/\s+/).filter(Boolean);
+    if (!terms.length) return [];
+    return INDEX.map(function(it){
+      var hay = (it.t + ' ' + it.d + ' ' + it.k).toLowerCase(), sc = 0;
+      terms.forEach(function(w){
+        if (it.t.toLowerCase().indexOf(w) === 0) sc += 10;
+        else if (it.t.toLowerCase().indexOf(w) >= 0) sc += 6;
+        else if (hay.indexOf(w) >= 0) sc += 2;
+      });
+      return {it:it, sc:sc};
+    }).filter(function(x){ return x.sc > 0; }).sort(function(a,b){ return b.sc - a.sc; }).slice(0, 24).map(function(x){ return x.it; });
+  }
+  function renderSearch(q){
+    var res = q ? runSearch(q) : [];
+    app.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Search</span><h1>Find a topic</h1><p>Type what you are stuck on. Lessons, flashcards, practice, and tools all show up here.</p>' +
+      '<div class="searchbox big"><input id="sq" type="search" placeholder="fractions, main idea, slope, the essay…" value="'+esc(q)+'" autocomplete="off"></div>' +
+      '<div class="chip-row" style="margin-top:12px">'+['fractions','percents','main idea','slope','the essay','calculator','Jim Crow','graphs'].map(function(x){ return '<a class="chip" href="#/search/'+encodeURIComponent(x)+'">'+x+'</a>'; }).join('')+'</div></div>' +
+      (q ? (res.length ? '<p class="muted" style="margin-bottom:14px">'+res.length+' result'+(res.length===1?'':'s')+' for &ldquo;'+esc(q)+'&rdquo;</p><div class="results">' + res.map(function(r){
+          return '<a class="hit" href="'+r.h+'"><div><span class="hit-kind">'+r.k+'</span><b>'+esc(r.t)+'</b><p>'+esc(r.d)+'</p></div>'+(r.time?'<span class="pill-time">'+esc(r.time)+'</span>':'')+'</a>';
+        }).join('') + '</div>'
+        : '<div class="card soft"><p class="muted">Nothing matched &ldquo;'+esc(q)+'&rdquo;. Try a plainer word, like &ldquo;fractions&rdquo; instead of &ldquo;dividing mixed numbers&rdquo;, or <a href="#/help">ask in Help</a>.</p></div>')
+        : '') + '</div>';
+    var box = $('#sq'); if (!box) return;
+    box.focus(); box.setSelectionRange(box.value.length, box.value.length);
+    var tm;
+    box.addEventListener('input', function(){ clearTimeout(tm); tm = setTimeout(function(){ var v = box.value.trim(); location.replace('#/search' + (v ? '/' + encodeURIComponent(v) : '')); }, 350); });
   }
 
   /* ---------- resources ---------- */
@@ -640,7 +847,15 @@
     return 'I do not have a ready answer for that one. Two options: <ul><li><a href="#/quote">Send this question to Aisha through the quote form</a>. She reads every message and usually replies within a business day.</li><li>Ask an AI helper like <a href="https://grok.com" target="_blank" rel="noopener">Grok</a> for an explanation, then check the answer against the study guide.</li></ul>';
   }
   function renderHelp(){
-    app.innerHTML = '<div class="wrap"><div class="page-head" style="padding-bottom:20px"><span class="eyebrow">Need help?</span><h1>Ask anything about the GED</h1><p>Quick answers about the test, registration, cost, and where to start. For anything the helper cannot answer, send it straight to Aisha.</p></div>' +
+    app.innerHTML = '<div class="wrap"><div class="page-head" style="padding-bottom:20px"><span class="eyebrow">Need help?</span><h1>Common questions</h1><p>Plain answers to the five things people ask most. Below them is a helper you can type any other question into.</p></div>' +
+      '<div class="faq-list">' + [
+        ['What is the GED, in one sentence?','Four separate tests &mdash; math, language arts, science, and social studies &mdash; that together count as a high school diploma. You take them one at a time, in any order, and you only have to pass each one once.'],
+        ['What score do I need?','<b>145</b> on each of the four. Scores run 100 to 200. Getting 165 or higher is called College Ready and can let a college skip placement testing, but 145 is all you need for the diploma itself.'],
+        ['What does it cost?','The test is <b>$36 a subject</b> in Minnesota, and promo code <b>MNGED10</b> takes $10 off up to four subjects while state funding lasts. Retaking a subject at a test center is $10. <b>This website is free</b>, with no account and no card. Tutoring with Aisha is separate and hourly, starting at $20. <a href="#/testday">Full cost breakdown.</a>'],
+        ['Do I need an account on this site?','No. There is no signup at all. Everything &mdash; guides, quizzes, flashcards, your plan &mdash; works right away, and your scores save on this device only. If you switch between a phone and a laptop, <a href="#/transfer">copy your progress across with a code</a>.'],
+        ['How do I actually sign up for the test?','Make a free account at <a href="https://ged.com" target="_blank" rel="noopener">GED.com</a>, pick a subject, and choose a test center near you or the at-home online option. You must be 19, or 17 with a waiver if you are out of school. <a href="#/testday">What to expect on the day.</a>']
+      ].map(function(f,i){ return '<details class="faq"'+(i===0?' open':'')+'><summary>'+f[0]+'</summary><div>'+f[1]+'</div></details>'; }).join('') + '</div>' +
+      '<h2 style="font-size:1.6rem;margin:34px 0 14px">Still stuck? Ask below.</h2>' +
       '<div class="help"><div class="chat"><div class="chat-head"><div class="av">A</div><div><b>Study helper</b><span>Instant answers · messages to Aisha answered within a business day</span></div></div>' +
       '<div class="chat-log" id="log"></div>' +
       '<div class="chips" id="chips">'+['What score do I need to pass?','How do I register?','How much does the test cost?','Where should I start?','Tell me about the essay','I need help with fractions'].map(function(c){ return '<button class="chip">'+c+'</button>'; }).join('')+'</div>' +

@@ -109,6 +109,7 @@
     var drafts = store.get('essays', {});
     var nDrafts = Object.keys(drafts).filter(function(k){ return drafts[k].text && drafts[k].text.length > 50; }).length;
     app.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Progress</span><h1>Where you stand</h1><p>Everything you have done on this device, in one place. The estimated score comes from your last three practice quizzes in each subject.</p><p class="small muted" style="margin-top:10px;max-width:46rem"><b>Read this before you trust the number.</b> It is a rough conversion from practice here onto the 100&ndash;200 GED scale, not an official score. Only the official GED Ready test, $7.99 a subject on GED.com, predicts your real result. Treat it as a direction, not a verdict.</p></div>' +
+      L.streakHTML() +
       '<div class="prog-grid">' + ids.map(function(id){ var st = stats(id); return '<div class="prog '+st.s.cls+'"><div class="prog-head"><h3>'+st.s.name+'</h3><span class="ready '+st.cls+'">'+st.ready+'</span></div>' +
         '<div class="prog-row"><span>Lessons done</span><b>'+st.topicsDone+' / '+st.topics+'</b></div><div class="bar"><i data-bar="'+(st.topicsDone/st.topics*100)+'" style="width:0"></i></div>' +
         '<div class="prog-row"><span>Recent practice average</span><b>'+(st.avg===null?'—':st.avg+'%')+'</b></div><div class="bar"><i data-bar="'+(st.avg||0)+'" style="width:0;background:'+(st.avg>=80?'var(--pine)':'var(--cinnamon)')+'"></i></div>' +
@@ -123,8 +124,9 @@
                    : '<p class="muted">Nothing logged yet. Every question you miss on a quiz lands here, grouped by skill.</p><p style="margin-top:12px"><a class="btn btn-ghost btn-sm" href="#/practice">Take a quiz</a></p>';
       })() + '</div>' +
       '<div class="card"><h3 style="font-size:1.4rem;margin-bottom:8px">Essays</h3><p class="muted">'+(nDrafts?nDrafts+' practice essay'+(nDrafts>1?'s':'')+' written on this device.':'No practice essays yet. The RLA test cannot be passed without one, so write at least two before test day.')+'</p><p style="margin-top:12px"><a class="btn btn-ghost btn-sm" href="#/essay">Open the essay workspace</a></p></div></div>' +
-      '<p class="small muted" style="margin-top:24px">Progress is stored in this browser only. Clearing site data or switching devices starts fresh. <button class="btn-text" id="reset">Reset everything</button></p></div>';
-    $('#reset').addEventListener('click', function(){ if (confirm('Erase all progress, attempts, flashcards, essays, and the plan on this device?')) { ['done','attempts','cards','essays','plan','plan_done','weak','last'].forEach(function(k){ try { localStorage.removeItem('lsl_'+k); } catch(e){} }); renderProgress(); } });
+      '<a class="sync-banner" href="#/transfer"><b>Studying on more than one device?</b><span>Your progress lives in this browser only. Copy it to your phone or laptop with a transfer code. No account needed. &rarr;</span></a>' +
+      '<p class="small muted" style="margin-top:24px">Progress is stored in this browser only. Clearing site data starts fresh. <button class="btn-text" id="reset">Reset everything</button></p></div>';
+    $('#reset').addEventListener('click', function(){ if (confirm('Erase all progress, attempts, flashcards, essays, and the plan on this device?')) { ['done','attempts','cards','essays','plan','plan_done','weak','last','streak','inprogress'].forEach(function(k){ try { localStorage.removeItem('lsl_'+k); } catch(e){} }); renderProgress(); } });
   }
 
   /* ---------- essay workspace ---------- */
