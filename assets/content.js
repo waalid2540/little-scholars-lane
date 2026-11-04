@@ -371,7 +371,7 @@ window.RESOURCES = [
  {name:'Minneapolis Adult Education', url:'https://ce.mpschools.org/adults/adult-ed/ged-adult-diploma', subj:[], type:'Free classes', free:'Free',
   desc:'Free in-person and online GED prep classes through Minneapolis Public Schools, with North and South campuses, day and evening. Ages 18 and up.', note:'Questions: 612-668-1863. Tutoring works well alongside a class.'},
  {name:'Adult Literacy Hotline', url:'https://hotline.mnabe.org/', subj:[], type:'Free classes', free:'Free',
-  desc:'Minnesota\'s statewide line for finding free GED, English, and college-prep classes near you, with interpreters available in over 200 languages.', note:'Call 800-222-1990 or text 612-424-1211.'},
+  desc:'Minnesota\'s statewide line for finding free GED, English, and college-prep classes near you, with referrals available in more than 200 languages.', note:'Call 800-222-1990 or text 612-424-1211.'},
  {name:'Khan Academy', url:'https://www.khanacademy.org', subj:['math','rla'], type:'Practice', free:'Free',
   desc:'Not GED-specific, but the best free place to drill a single math skill until it sticks. Search the exact topic and do the practice set.', note:'Best for extra practice after a Get Sum Math video.'},
  {name:'TI-30XS online calculator tutorial', url:'https://ged.com/study/calculator/', subj:['math','science'], type:'Official', free:'Free',
