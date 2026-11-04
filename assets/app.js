@@ -93,6 +93,39 @@
     return '<a class="btn btn-primary" href="'+l.h+'">Continue where you left off</a>';
   }
 
+  /* ---------- rough GED scale estimate from practice here ---------- */
+  var ANCHORS = [[0,110],[40,138],[55,146],[70,155],[85,167],[100,185]];
+  function estScore(pct){
+    if (pct === null || pct === undefined) return null;
+    pct = Math.max(0, Math.min(100, pct));
+    for (var i = 1; i < ANCHORS.length; i++) {
+      if (pct <= ANCHORS[i][0]) {
+        var a = ANCHORS[i-1], b = ANCHORS[i];
+        var t = (pct - a[0]) / (b[0] - a[0]);
+        return Math.round(a[1] + t * (b[1] - a[1]));
+      }
+    }
+    return 185;
+  }
+  function band(score){
+    if (score === null) return {key:'none', label:'Not measured yet', plain:'Take one quiz and an estimate appears here.'};
+    if (score < 145) return {key:'low', label:'Not passing yet', plain:'Below 145. Keep studying this subject before you book the real test.'};
+    if (score < 165) return {key:'pass', label:'Passing range', plain:'145 to 164 earns your GED in this subject. 145 is the line Minnesota requires.'};
+    if (score < 175) return {key:'college', label:'College ready', plain:'165 or higher means colleges may waive placement testing in this subject.'};
+    return {key:'credit', label:'College ready + credit', plain:'175 or higher can earn college credit at some schools.'};
+  }
+  function readinessHTML(sid, pct){
+    var sc = estScore(pct), b = band(sc);
+    var pos = sc === null ? 0 : Math.max(0, Math.min(100, (sc - 100)));
+    return '<div class="ready-meter '+b.key+'">' +
+      '<div class="rm-top"><span class="rm-score">'+(sc===null?'—':sc)+'</span><span class="rm-band">'+b.label+'</span></div>' +
+      '<div class="rm-scale"><span class="rm-fill" style="width:'+pos+'%"></span>' +
+        '<span class="rm-tick" style="left:45%"><i>145</i></span><span class="rm-tick" style="left:65%"><i>165</i></span>' +
+        (sc===null?'':'<span class="rm-dot" style="left:'+pos+'%"></span>') +
+      '</div><div class="rm-ends"><span>100</span><span>200</span></div>' +
+      '<p class="rm-plain">'+b.plain+'</p></div>';
+  }
+
   /* ---------- confetti ---------- */
   function confetti(){
     if (REDUCED) return;
@@ -138,7 +171,7 @@
       '<p>'+o.body+'</p>' +
       '<div class="sub-foot"><span class="sub-big"><b>'+o.bigN+'</b><span>'+o.bigLabel+'</span></span><span class="sub-go">'+o.go+' →</span></div></a>';
   }
-  window.LSL = {$:$, app:app, store:store, esc:esc, subj:subj, topicOf:topicOf, doneSet:doneSet, attempts:function(){ return store.get('attempts', []); }, subjectCard:subjectCard, ring:ring, ICONS:ICONS};
+  window.LSL = {$:$, app:app, store:store, esc:esc, subj:subj, topicOf:topicOf, doneSet:doneSet, attempts:function(){ return store.get('attempts', []); }, subjectCard:subjectCard, ring:ring, ICONS:ICONS, estScore:estScore, band:band, readinessHTML:readinessHTML, weakSkills:weakSkills};
 
   var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -156,6 +189,7 @@
     if (page === 'home' || page === 'quote') renderHome(page === 'quote');
     else if (page === 'study') { if (parts.length === 1) renderStudy(); else if (parts.length === 2) renderSubject(parts[1]); else renderTopic(parts[1], parts[2]); }
     else if (page === 'practice') { if (parts.length === 1) renderPractice(); else renderQuizSetup(parts[1]); }
+    else if (page === 'drill') { if (parts.length === 1) renderDrill(); else startDrill(parts[1]); }
     else if (page === 'resources') renderResources();
     else if (page === 'help') renderHelp();
     else if (window.EXTRA && window.EXTRA[page]) window.EXTRA[page](parts.slice(1));
@@ -364,8 +398,9 @@
         '<div class="tryit" id="tryit"><div class="lbl">Try it yourself</div><div class="q">'+t.tryIt.q+'</div><button class="btn btn-ghost btn-sm" id="reveal">Show the answer</button><div class="reveal"><b>'+t.tryIt.answer+'</b><p class="muted" style="margin-top:6px">'+t.tryIt.explain+'</p></div></div>' +
         '<div class="lesson-nav"><label class="mark-done"><input type="checkbox" id="done" '+(done?'checked':'')+'> Mark this topic done</label><div style="display:flex;gap:10px;flex-wrap:wrap">'+(prev?'<a class="btn btn-ghost btn-sm" href="#/study/'+s.id+'/'+prev.id+'">← '+prev.title+'</a>':'')+(next?'<a class="btn btn-primary btn-sm" href="#/study/'+s.id+'/'+next.id+'">'+next.title+' →</a>':'<a class="btn btn-primary btn-sm" href="#/practice/'+s.id+'">Practice '+s.short+' →</a>')+'</div></div>' +
       '</div><aside class="lesson-side"><div class="side-card"><h4>'+s.short+' topics</h4>'+s.topics.map(function(x){ return '<a href="#/study/'+s.id+'/'+x.id+'" class="'+(x.id===t.id?'cur':'')+'">'+x.title+'</a>'; }).join('')+'</div>' +
-      '<div class="side-card"><h4>Stuck?</h4><a href="#/help">Ask in the help chat →</a><a href="#/resources">Watch a video on this →</a></div></aside></div></div>';
+      '<div class="side-card"><h4>Stuck?</h4><a href="#/help">Ask in the help chat →</a><a href="#/resources">Watch a video on this →</a></div><div class="side-card"><h4>Hands busy?</h4><p class="small muted" style="margin:0 0 10px">Play the lesson aloud with your device&rsquo;s built-in voice. Nothing downloads and no data is sent.</p><button class="btn btn-ghost btn-sm" id="listen">Listen to this lesson</button></div><div class="side-card"><h4>Bad wifi?</h4><p class="small muted" style="margin:0 0 10px">Print this lesson, worked example and all, and study it on paper.</p><button class="btn btn-ghost btn-sm" onclick="window.print()">Print this lesson</button></div></aside></div></div>';
     $('#reveal').addEventListener('click', function(){ $('#tryit').classList.add('open'); });
+    bindListen(s, t);
     $('#done').addEventListener('change', function(e){ var d = doneSet(); if (e.target.checked) d[key] = Date.now(); else delete d[key]; store.set('done', d); });
   }
 
@@ -381,6 +416,7 @@
         return subjectCard({cls:s.cls, icon:s.id, href:'#/practice/'+s.id, title:s.name, pct:best||0, ringLabel:'best score',
           meta:[best!==null?'Best score '+best+'%':'Not attempted yet'], body:s.overview.split('. ')[0]+'.', bigN:n, bigLabel:'questions', go:'Start a '+s.short+' quiz'});
       }).join('') + '</div>' +
+      (SUBJECTS.some(function(s){ return weakSkills(s.id).length; }) ? '<a class="drill-cta" href="#/drill"><b>Drill your weak spots</b><span>Five questions on exactly what you have missed, not another full test. →</span></a>' : '') +
       progressPanel(at) +
       (at.length ? '<h2 style="font-size:1.8rem;margin:44px 0 14px">Your recent attempts</h2><div class="history">' + at.slice(0,8).map(function(a){ var s = subj(a.s); return '<div class="hist"><div><b>'+(s?s.name:a.s)+'</b><div class="small muted">'+new Date(a.t).toLocaleDateString()+' · '+a.n+' questions'+(a.timed?' · timed':'')+'</div></div><div class="pct '+(a.pct>=75?'good':a.pct<60?'low':'')+'">'+a.pct+'%</div></div>'; }).join('') + '</div>' : '') +
       '</div>';
@@ -393,7 +429,7 @@
       '</p></div><div class="pstrip-rings">' + SUBJECTS.map(function(s){
         var best = null; at.forEach(function(a){ if (a.s===s.id && (best===null || a.pct>best)) best = a.pct; });
         var n = 0; at.forEach(function(a){ if (a.s===s.id) n++; });
-        return '<a class="pring '+s.cls+'" href="#/practice/'+s.id+'">'+ring(best||0, s.short+' best score')+'<b>'+s.short+'</b><span>'+(best===null?'Start here':n+' attempt'+(n===1?'':'s'))+'</span></a>';
+        return '<a class="pring '+s.cls+'" href="#/practice/'+s.id+'">'+ring(best||0, s.short+' best score')+'<b>'+s.short+'</b><span>'+(best===null?'Start here':'Est. '+estScore(best))+'</span></a>';
       }).join('') + '</div>' + (any ? '' : '<a class="btn btn-primary btn-sm" href="#/practice/math">Start with a math quiz</a>') + '</section>';
   }
   function renderQuizSetup(sid){
@@ -412,7 +448,7 @@
     $('#mock').addEventListener('click', function(){ startQuiz(s, {n:total, timed:1, shuffle:1}); });
   }
   function startQuiz(s, opts){
-    var bank = QUESTIONS[s.id].map(function(q,i){ q._i = i; return q; });
+    var bank = (opts.pool || QUESTIONS[s.id]).map(function(q,i){ q._i = i; return q; });
     var qs = bank.slice();
     if (opts.shuffle) {
       // keep passage groups together
@@ -423,7 +459,7 @@
     }
     qs = qs.slice(0, opts.n);
     var perQ = {math:150, rla:100, science:160, social:120}[s.id] || 120;
-    quiz.state = {s:s, qs:qs, i:0, ans:{}, flags:{}, timed:opts.timed, left:perQ*qs.length, started:Date.now()};
+    quiz.state = {s:s, qs:qs, i:0, ans:{}, flags:{}, timed:opts.timed, left:perQ*qs.length, started:Date.now(), drill:!!opts.drill};
     if (opts.timed) quiz.timer = setInterval(function(){ var st = quiz.state; if (!st) return; st.left--; var el = $('#timer'); if (el) { el.textContent = fmt(st.left); el.classList.toggle('warn', st.left < 120); } if (st.left <= 0) finishQuiz(); }, 1000);
     renderQuestion();
   }
@@ -454,12 +490,20 @@
     if (quiz.timer) { clearInterval(quiz.timer); quiz.timer = null; }
     var st = quiz.state; if (!st) return;
     var s = st.s, n = st.qs.length, right = 0, skills = {};
-    st.qs.forEach(function(q,k){ var ok = st.ans[k] === q.a; if (ok) right++; skills[q.skill] = skills[q.skill] || {r:0,t:0}; skills[q.skill].t++; if (ok) skills[q.skill].r++; });
+    var weak = store.get('weak', {}); weak[s.id] = weak[s.id] || {};
+    st.qs.forEach(function(q,k){
+      var ok = st.ans[k] === q.a; if (ok) right++;
+      skills[q.skill] = skills[q.skill] || {r:0,t:0}; skills[q.skill].t++; if (ok) skills[q.skill].r++;
+      if (!ok) weak[s.id][q.skill] = Math.min(9, (weak[s.id][q.skill] || 0) + 1);
+      else if (weak[s.id][q.skill]) { weak[s.id][q.skill]--; if (!weak[s.id][q.skill]) delete weak[s.id][q.skill]; }
+    });
+    if (!Object.keys(weak[s.id]).length) delete weak[s.id];
+    store.set('weak', weak);
     var pct = Math.round(right/n*100);
-    var at = attempts(); at.push({s:s.id, n:n, r:right, pct:pct, t:Date.now(), timed:!!st.timed}); store.set('attempts', at.slice(-40));
+    if (!st.drill) { var at = attempts(); at.push({s:s.id, n:n, r:right, pct:pct, t:Date.now(), timed:!!st.timed}); store.set('attempts', at.slice(-40)); }
     var msg = pct>=85 ? 'Strong. If this holds up over a few quizzes, you are ready for the official GED Ready practice test in '+s.short+'.' : pct>=75 ? 'On track. Review the misses below, then try the full set. Above 75% consistently means you are close.' : pct>=60 ? 'Getting there. Focus your studying on the skills with the lowest bars below, then come back.' : 'A starting point, not a verdict. Work through the '+s.short+' study guide topic by topic, then try again. Most people start right here.';
     var weakest = Object.keys(skills).sort(function(a,b){ return (skills[a].r/skills[a].t) - (skills[b].r/skills[b].t); })[0];
-    app.innerHTML = '<div class="wrap '+s.cls+'" style="padding-top:36px"><div class="crumbs"><span><a href="#/practice">Practice tests</a></span><span>'+s.name+'</span><span>Results</span></div>' +
+    app.innerHTML = '<div class="wrap '+s.cls+'" style="padding-top:36px"><div class="crumbs"><span><a href="'+(st.drill?'#/drill':'#/practice')+'">'+(st.drill?'Weak-spot drills':'Practice tests')+'</a></span><span>'+s.name+'</span><span>Results</span></div>' +
       '<div class="score-hero"><div class="score-ring'+(pct>=75?' good':'')+(pct>=75?' glow':'')+'" data-ring="'+pct+'" style="--p:0"><div>0%<small>'+right+' of '+n+'</small></div></div><div><h1 style="font-size:2.2rem;margin-bottom:8px">'+s.name+'</h1><p>'+msg+'</p>' +
       '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px"><a class="btn btn-primary btn-sm" href="#/practice/'+s.id+'">Try again</a>'+(weakest?'<a class="btn btn-ghost btn-sm" href="#/study/'+s.id+'">Study '+s.short+' →</a>':'')+'<a class="btn btn-ghost btn-sm" href="#/help">Ask for help</a></div></div></div>' +
       '<div class="skills">' + Object.keys(skills).map(function(k){ var v = skills[k], p = Math.round(v.r/v.t*100); return '<div class="skill"><span>'+k+'</span><span class="muted">'+v.r+' / '+v.t+'</span><div class="bar"><i data-bar="'+p+'" style="width:0;background:'+(p>=75?'var(--pine)':'var(--cinnamon)')+'"></i></div></div>'; }).join('') + '</div>' +
@@ -470,6 +514,73 @@
     window.scrollTo(0,0);
     scanAnimated();
     if (pct >= 75) setTimeout(confetti, 420);
+  }
+
+  /* ---------- listen to a lesson (device voice, no download) ---------- */
+  function plainText(html){
+    var d = document.createElement('div'); d.innerHTML = html;
+    d.querySelectorAll('table').forEach(function(t){ t.remove(); });
+    return (d.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+  function lessonScript(s, t){
+    var parts = [t.title + '.', t.summary];
+    t.learn.forEach(function(h){ var txt = plainText(h); if (txt) parts.push(txt); });
+    parts.push('Worked example. ' + t.example.problem);
+    t.example.steps.forEach(function(x, i){ parts.push('Step ' + (i+1) + '. ' + plainText(x)); });
+    parts.push('The answer is ' + t.example.answer + '.');
+    parts.push('Now try one yourself. ' + t.tryIt.q);
+    parts.push('The answer is ' + t.tryIt.answer + '. ' + t.tryIt.explain);
+    return parts.join(' ');
+  }
+  function bindListen(s, t){
+    var btn = $('#listen'); if (!btn) return;
+    if (!('speechSynthesis' in window)) { btn.closest('.side-card').hidden = true; return; }
+    var synth = window.speechSynthesis, speaking = false;
+    function stop(){ synth.cancel(); speaking = false; btn.textContent = 'Listen to this lesson'; btn.classList.remove('on'); }
+    btn.addEventListener('click', function(){
+      if (speaking) { stop(); return; }
+      var chunks = lessonScript(s, t).match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+      synth.cancel();
+      chunks.forEach(function(c, i){
+        var u = new SpeechSynthesisUtterance(c.trim());
+        u.rate = 0.95; u.pitch = 1;
+        if (i === chunks.length - 1) u.onend = stop;
+        synth.speak(u);
+      });
+      speaking = true; btn.textContent = 'Stop'; btn.classList.add('on');
+    });
+    window.addEventListener('hashchange', stop);
+  }
+
+  /* ---------- weak-spot drill ---------- */
+  function weakSkills(sid){
+    var w = store.get('weak', {})[sid] || {};
+    return Object.keys(w).sort(function(a,b){ return w[b]-w[a]; }).map(function(k){ return {skill:k, n:w[k]}; });
+  }
+  function renderDrill(){
+    var any = SUBJECTS.filter(function(s){ return weakSkills(s.id).length; });
+    app.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Weak-spot drills</span><h1>Just the things you got wrong</h1><p>Not another full test. Five questions on the exact skills you have missed, pulled from the subjects you have practiced. Get one right and it drops off the list. Miss it again and it sticks around.</p></div>' +
+      (any.length ? '<div class="subject-grid">' + any.map(function(s){
+          var w = weakSkills(s.id), total = w.reduce(function(n,x){ return n+x.n; }, 0);
+          return '<a class="subject '+s.cls+'" href="#/drill/'+s.id+'">' +
+            '<div class="sub-top"><span class="sub-icon">'+(ICONS[s.id]||'')+'</span></div>' +
+            '<h3>'+s.name+'</h3><div class="meta"><span>'+w.length+' skill'+(w.length===1?'':'s')+' to shore up</span></div>' +
+            '<div class="chip-row" style="margin:4px 0 2px">'+w.slice(0,5).map(function(x){ return '<span class="chip" style="cursor:default">'+x.skill+(x.n>1?' ·'+x.n:'')+'</span>'; }).join('')+'</div>' +
+            '<div class="sub-foot"><span class="sub-big"><b>'+total+'</b><span>miss'+(total===1?'':'es')+' logged</span></span><span class="sub-go">Drill 5 questions →</span></div></a>';
+        }).join('') + '</div>'
+        : '<div class="card soft"><h3 style="font-size:1.4rem;margin-bottom:8px">Nothing to drill yet</h3><p class="muted">Take a practice quiz first. Every question you miss lands here, grouped by skill, so you can come back and hit only those.</p><p style="margin-top:14px"><a class="btn btn-primary btn-sm" href="#/practice">Take a practice quiz</a></p></div>') +
+      '</div>';
+  }
+  function startDrill(sid){
+    var s = subj(sid); if (!s) return renderDrill();
+    var w = weakSkills(sid); if (!w.length) return renderDrill();
+    var wanted = {}; w.forEach(function(x){ wanted[x.skill] = x.n; });
+    var pool = QUESTIONS[sid].filter(function(q){ return wanted[q.skill]; });
+    pool.sort(function(a,b){ return (wanted[b.skill]||0) - (wanted[a.skill]||0); });
+    var head = pool.slice(0, 14);
+    for (var i = head.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t = head[i]; head[i] = head[j]; head[j] = t; }
+    if (!head.length) return renderDrill();
+    startQuiz(s, {n:Math.min(5, head.length), timed:0, shuffle:0, pool:head, drill:true});
   }
 
   /* ---------- resources ---------- */
@@ -496,8 +607,8 @@
     {k:['pass','passing','score','145','165','175','points','scale'], a:'GED scores run from 100 to 200 on each of the four subjects. <b>145</b> is passing. <b>165</b> is College Ready, and <b>175</b> can earn college credit. You need 145 or higher on all four subjects to earn your GED, but you take and pass them one at a time, in any order.'},
     {k:['subject','subjects','tests','four','parts','what is on','whats on','cover'], a:'There are four separate tests: <b>Mathematical Reasoning</b> (115 min), <b>Reasoning Through Language Arts</b> (150 min, includes an essay), <b>Science</b> (90 min), and <b>Social Studies</b> (70 min). You can schedule them on different days. Most people start with the one they find easiest to build confidence, or with math because it takes the most study time. <a href="#/study">See the study guides for each.</a>'},
     {k:['register','registration','sign up','signup','account','schedule','book','appointment','where do i take','test center','online test','onvue','at home'], a:'Everything goes through <a href="https://ged.com" target="_blank" rel="noopener">GED.com</a>. Create a free account, pick a subject, and choose a test center in the Minneapolis area or the online proctored option (you need a quiet room, a webcam, and a passing GED Ready practice score to test online). I can walk you through the whole thing in a single $20 session if you want a hand. <a href="#/quote">Ask for that here.</a>'},
-    {k:['cost','price','fee','how much','expensive','pay','money','afford'], a:'Two different costs. <b>The test itself</b> is paid to the testing service per subject; in Minnesota it has been around $30 to $40 a subject, but check <a href="https://ged.com/policies/minnesota/" target="_blank" rel="noopener">the Minnesota page on GED.com</a> for the current price. <b>Tutoring with me</b> starts at $20 an hour, the first 30 minutes are free, and the study tools on this site cost nothing.'},
-    {k:['age','old','young','16','17','18','19','minor','under'], a:'In Minnesota you can take the GED at 19 or older. If you are 16 to 18 you need an age waiver, usually arranged through an adult education program. Free Minneapolis Adult Education classes are for ages 18 and up. Call the <b>Adult Literacy Hotline at 800-222-1990</b> and they will tell you exactly what applies to you.'},
+    {k:['cost','price','fee','how much','expensive','pay','money','afford'], a:'Three separate things. <b>This site</b> is free, all of it, with no account. <b>The GED test</b> is $36 a subject in Minnesota, and promo code <b>MNGED10</b> takes $10 off up to four subject tests while state funding lasts. A retake at a test center is $10. The official GED Ready practice test is $7.99 a subject. <b>Tutoring with me</b> is separate and hourly, from $20, with the first 30 minutes free. <a href="#/testday">Full cost breakdown here.</a>'},
+    {k:['age','old','young','16','17','18','19','minor','under'], a:"Minnesota&rsquo;s minimum age is <b>19</b>. At <b>17</b>, if you are out of school, you can test with an age waiver form, and for an online test a parent or guardian joins the check-in to give consent. Free Minneapolis Adult Education classes are for ages 18 and up. Call the <b>Adult Literacy Hotline at 800-222-1990</b> and they will tell you exactly what applies to you."},
     {k:['calculator','ti-30','ti30','formula','formula sheet'], a:'You get an on-screen <b>TI-30XS</b> calculator for the math test after the first five questions, and for all of science and social studies. A <b>formula sheet</b> is also provided for math. You do not need to memorize area, volume, or the quadratic formula. <a href="#/study/math/calculator">Here is the lesson on both.</a>'},
     {k:['how long','how many hours','weeks','months','study time','how much time','timeline','plan'], a:'It depends on your starting score. A rough guide: if a practice test puts you in the 130s, plan 6 to 10 weeks of 4 to 5 hours a week for that subject. In the 140s, 2 to 4 weeks. Start with <a href="#/practice">a 10-question practice test</a> here to see where you are, then study the weakest subject first.'},
     {k:['essay','extended response','writing','write'], a:'The RLA essay gives you two passages that disagree and asks which one is <b>better supported</b>. You are judging the evidence, not giving your opinion. You have 45 minutes. <a href="#/study/rla/extended-response">The essay lesson has a template and a pacing plan.</a>'},

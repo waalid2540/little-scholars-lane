@@ -1,6 +1,7 @@
 /* Extra pages: study plan, progress dashboard, essay workspace, flashcards, formula sheet, test day. */
 (function(){
   var L = window.LSL, $ = L.$, app = L.app, store = L.store, esc = L.esc, subj = L.subj;
+  var estScore = L.estScore, readinessHTML = L.readinessHTML, weakSkills = L.weakSkills;
   var ids = ['math','rla','science','social'];
 
   /* ---------- shared stats ---------- */
@@ -12,8 +13,9 @@
     var recent = at.slice(-3); var avg = recent.length ? Math.round(recent.reduce(function(x,a){ return x+a.pct; },0)/recent.length) : null;
     var cs = store.get('cards', {})[sid] || {}; var mastered = Object.keys(cs).filter(function(k){ return cs[k]==='got'; }).length;
     var total = (CARDS[sid]||[]).length;
-    var ready = avg===null ? 'Take a practice test' : avg>=80 ? 'Ready for GED Ready' : avg>=65 ? 'Getting close' : 'Keep studying';
-    var cls = avg===null ? '' : avg>=80 ? 'good' : avg>=65 ? 'mid' : 'low';
+    var est = estScore(avg);
+    var ready = est===null ? 'Take a practice test' : est>=165 ? 'College ready' : est>=145 ? 'Passing range' : 'Not passing yet';
+    var cls = est===null ? '' : est>=165 ? 'good' : est>=145 ? 'mid' : 'low';
     return {s:s, topicsDone:nd, topics:s.topics.length, best:best, avg:avg, attempts:at.length, mastered:mastered, cards:total, ready:ready, cls:cls};
   }
 
@@ -106,17 +108,23 @@
     var plan = store.get('plan', null), pd = store.get('plan_done', {});
     var drafts = store.get('essays', {});
     var nDrafts = Object.keys(drafts).filter(function(k){ return drafts[k].text && drafts[k].text.length > 50; }).length;
-    app.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Progress</span><h1>Where you stand</h1><p>Everything you have done on this device, in one place. Readiness is based on your last three practice quizzes in each subject. Scores here are a guide, not an official GED score.</p></div>' +
+    app.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Progress</span><h1>Where you stand</h1><p>Everything you have done on this device, in one place. The estimated score comes from your last three practice quizzes in each subject.</p><p class="small muted" style="margin-top:10px;max-width:46rem"><b>Read this before you trust the number.</b> It is a rough conversion from practice here onto the 100&ndash;200 GED scale, not an official score. Only the official GED Ready test, $7.99 a subject on GED.com, predicts your real result. Treat it as a direction, not a verdict.</p></div>' +
       '<div class="prog-grid">' + ids.map(function(id){ var st = stats(id); return '<div class="prog '+st.s.cls+'"><div class="prog-head"><h3>'+st.s.name+'</h3><span class="ready '+st.cls+'">'+st.ready+'</span></div>' +
         '<div class="prog-row"><span>Lessons done</span><b>'+st.topicsDone+' / '+st.topics+'</b></div><div class="bar"><i data-bar="'+(st.topicsDone/st.topics*100)+'" style="width:0"></i></div>' +
         '<div class="prog-row"><span>Recent practice average</span><b>'+(st.avg===null?'—':st.avg+'%')+'</b></div><div class="bar"><i data-bar="'+(st.avg||0)+'" style="width:0;background:'+(st.avg>=80?'var(--pine)':'var(--cinnamon)')+'"></i></div>' +
+        readinessHTML(id, st.avg) +
         '<div class="prog-row"><span>Best quiz · attempts</span><b>'+(st.best===null?'—':st.best+'%')+' · '+st.attempts+'</b></div>' +
         '<div class="prog-row"><span>Flashcards mastered</span><b>'+st.mastered+' / '+st.cards+'</b></div><div class="bar"><i data-bar="'+(st.cards?st.mastered/st.cards*100:0)+'" style="width:0;background:var(--pine)"></i></div>' +
         '<div class="prog-links"><a href="#/study/'+id+'">Lessons</a><a href="#/practice/'+id+'">Quiz</a><a href="#/cards/'+id+'">Cards</a></div></div>'; }).join('') + '</div>' +
       '<div class="setup" style="margin-top:28px"><div class="card"><h3 style="font-size:1.4rem;margin-bottom:8px">Study plan</h3>' + (plan ? '<p class="muted">Test date '+new Date(plan.date+'T12:00:00').toLocaleDateString()+' · '+Object.keys(pd).length+' of '+plan.weeks.reduce(function(n,w){ return n+w.items.length; },0)+' items done.</p><p style="margin-top:12px"><a class="btn btn-primary btn-sm" href="#/plan">Open my plan</a></p>' : '<p class="muted">No plan yet. It takes two minutes and tells you what to do each week.</p><p style="margin-top:12px"><a class="btn btn-primary btn-sm" href="#/plan">Build a plan</a></p>') + '</div>' +
+      '<div class="card"><h3 style="font-size:1.4rem;margin-bottom:8px">Weak spots</h3>' + (function(){
+        var tot = 0, subs = 0; ids.forEach(function(id){ var w = weakSkills(id); if (w.length) { subs++; tot += w.length; } });
+        return tot ? '<p class="muted">'+tot+' skill'+(tot===1?'':'s')+' across '+subs+' subject'+(subs===1?'':'s')+' still tripping you up.</p><p style="margin-top:12px"><a class="btn btn-primary btn-sm" href="#/drill">Drill them</a></p>'
+                   : '<p class="muted">Nothing logged yet. Every question you miss on a quiz lands here, grouped by skill.</p><p style="margin-top:12px"><a class="btn btn-ghost btn-sm" href="#/practice">Take a quiz</a></p>';
+      })() + '</div>' +
       '<div class="card"><h3 style="font-size:1.4rem;margin-bottom:8px">Essays</h3><p class="muted">'+(nDrafts?nDrafts+' practice essay'+(nDrafts>1?'s':'')+' written on this device.':'No practice essays yet. The RLA test cannot be passed without one, so write at least two before test day.')+'</p><p style="margin-top:12px"><a class="btn btn-ghost btn-sm" href="#/essay">Open the essay workspace</a></p></div></div>' +
       '<p class="small muted" style="margin-top:24px">Progress is stored in this browser only. Clearing site data or switching devices starts fresh. <button class="btn-text" id="reset">Reset everything</button></p></div>';
-    $('#reset').addEventListener('click', function(){ if (confirm('Erase all progress, attempts, flashcards, essays, and the plan on this device?')) { ['done','attempts','cards','essays','plan','plan_done'].forEach(function(k){ try { localStorage.removeItem('lsl_'+k); } catch(e){} }); renderProgress(); } });
+    $('#reset').addEventListener('click', function(){ if (confirm('Erase all progress, attempts, flashcards, essays, and the plan on this device?')) { ['done','attempts','cards','essays','plan','plan_done','weak','last'].forEach(function(k){ try { localStorage.removeItem('lsl_'+k); } catch(e){} }); renderProgress(); } });
   }
 
   /* ---------- essay workspace ---------- */
@@ -192,18 +200,43 @@
 
   /* ---------- test day ---------- */
   function renderTestDay(){
-    app.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Test day</span><h1>What to expect, so nothing surprises you</h1><p>Nerves cost points. Read this a week before your test and again the night before. Details change, so confirm specifics on your GED.com account.</p></div>' +
+    app.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Test day</span><h1>What it costs, and what to expect</h1><p>Read this a week before your test and again the night before. Prices and rules come from GED.com and do change, so confirm them in your own account before you pay.</p></div>' +
       '<div class="lesson"><div class="lesson-body">' +
-      '<h2>Two weeks before</h2><ul><li>Take the official <b>GED Ready</b> practice test in the subject you are testing. A green "Likely to Pass" is your signal to book. Yellow means two more weeks.</li><li>Book through <a href="https://ged.com" target="_blank" rel="noopener">GED.com</a>. Pick a test center in the Minneapolis area or the online option. Online testing requires a GED Ready pass, a private room, a webcam, and a reliable connection.</li><li>Request accommodations now if you need them. Approval takes time.</li></ul>' +
-      '<h2>The night before</h2><ul><li>Lay out a <b>government photo ID</b> that matches the name on your GED account exactly. No ID, no test, no refund.</li><li>Check the address and parking, or test your computer and room if testing online.</li><li>Do one flashcard pass. Do not cram. Sleep is worth more than another hour of study.</li></ul>' +
-      '<h2>What to bring</h2><ul><li>Your ID.</li><li>Your confirmation email or number.</li><li>A physical TI-30XS calculator if you want one for math (the on-screen one is also provided).</li><li>Nothing else goes into the room. Phone, bag, watch, and notes go in a locker.</li></ul>' +
-      '<h2>In the room</h2><ul><li>You get an erasable board and marker for scratch work. Ask for a second one if you fill it.</li><li>The clock is on screen. The math test has one short break; RLA has a 10-minute break after the essay. Science and social studies have none.</li><li>You can flag questions and come back. Do that instead of staring.</li><li>There is no penalty for guessing. Never leave a blank.</li><li>Online testers: keep your eyes on the screen and do not talk out loud. The proctor is watching through the webcam.</li></ul>' +
-      '<h2>Pacing cheat sheet</h2><table><tr><th>Subject</th><th>Time</th><th>Questions</th><th>Per question</th></tr><tr><td>Math</td><td>115 min</td><td>~46</td><td>~2.5 min</td></tr><tr><td>RLA</td><td>150 min</td><td>~50 + essay</td><td>~1.5 min + 45 for essay</td></tr><tr><td>Science</td><td>90 min</td><td>~34</td><td>~2.5 min</td></tr><tr><td>Social Studies</td><td>70 min</td><td>~35</td><td>~2 min</td></tr></table>' +
-      '<h2>After</h2><ul><li>Scores usually post to your GED.com account within a few hours, sometimes the same day. The essay takes longer.</li><li>145 or above: that subject is done forever. Celebrate, then schedule the next one while the momentum is there.</li><li>Below 145: your score report lists the skills to work on. You can retake soon. The first two retakes have a short wait; the third requires 60 days. <a href="#/help">Tell me which subject</a> and we will plan it.</li></ul>' +
-      '<div class="callout"><b>The morning of:</b> eat something with protein, arrive 20 minutes early, and remember that you have already done every kind of question on this test. The room is new. The questions are not.</div>' +
-      '</div><aside class="lesson-side"><div class="side-card"><h4>Quick links</h4><a href="https://ged.com" target="_blank" rel="noopener">GED.com: schedule and scores</a><a href="https://ged.com/policies/minnesota/" target="_blank" rel="noopener">Minnesota rules and prices</a><a href="#/formulas">Printable formula sheet</a><a href="#/practice">Last practice quiz</a></div><div class="side-card"><h4>Want a hand with booking?</h4><p class="small muted" style="margin-bottom:10px">A single $20 session covers setting up your account, picking a date, and a calm plan for the morning.</p><a href="#/quote" class="btn btn-primary btn-sm" style="display:inline-flex;border:0">Ask Aisha</a></div></aside></div></div>';
+      '<h2>What it costs in Minnesota</h2>' +
+      '<table><tr><th>Item</th><th>Price</th><th>Notes</th></tr>' +
+      '<tr><td>One subject test</td><td>$36</td><td>Same price at a test center or online</td></tr>' +
+      '<tr><td>All four subjects</td><td>$144</td><td>You pay per subject, as you book each one</td></tr>' +
+      '<tr><td>Minnesota discount</td><td>&minus;$10 each</td><td>Promo code <b>MNGED10</b> at checkout, up to 4 subject tests, while state funding lasts. That makes a subject $26.</td></tr>' +
+      '<tr><td>Retake at a test center</td><td>$10</td><td>Discounted retake after your first attempt in that subject</td></tr>' +
+      '<tr><td>Retake online</td><td>$36</td><td>Online retakes are not discounted</td></tr>' +
+      '<tr><td>GED Ready practice test</td><td>$7.99</td><td>Per subject. The only test that predicts your real score.</td></tr>' +
+      '</table>' +
+      '<div class="callout"><b>If money is the barrier, say so out loud.</b> Promo codes run until the state funding is spent, so check <a href="https://ged.com/policies/minnesota/" target="_blank" rel="noopener">the Minnesota page on GED.com</a> before every booking. Free adult education programs can also help with fees: call the <b>Adult Literacy Hotline at 800-222-1990</b> or <b>Minneapolis Adult Education at 612-668-1863</b> and ask directly what they cover. People ask them this every day.</div>' +
+      '<h2>Who can test</h2><ul><li>Minnesota&rsquo;s minimum age is <b>19</b>.</li><li>At <b>17</b>, if you are out of school, you can test with an age waiver form.</li><li>For an online test with a waiver, a parent or guardian has to join the check-in to give consent.</li></ul>' +
+      '<h2>Online or in person</h2><p>Both cost the same and both count the same. Pick by what your life allows.</p>' +
+      '<table><tr><th></th><th>Online (OnVUE)</th><th>Test center</th></tr>' +
+      '<tr><td>Where</td><td>Your own quiet room</td><td>A center near you, searched by zip on GED.com</td></tr>' +
+      '<tr><td>Needs</td><td>A webcam, a steady connection, a room nobody enters</td><td>Getting there and back</td></tr>' +
+      '<tr><td>Before you can book</td><td>A green <b>Likely to Pass</b> on GED Ready for that subject</td><td>Nothing extra</td></tr>' +
+      '<tr><td>Retake price</td><td>$36</td><td>$10</td></tr>' +
+      '</table>' +
+      '<h2>If you test online, do this first</h2><ul>' +
+      '<li><b>Run the system test</b> from your GED.com account on the same computer, in the same room, on the same wifi you will use. It checks your camera, microphone, and connection. Do it days early, not an hour before.</li>' +
+      '<li><b>Clear the room and the desk.</b> No papers, no phone, no second monitor, no drinks unless they are in a clear container. You will be asked to pan your camera around the room.</li>' +
+      '<li><b>Be alone.</b> Nobody can walk in, not a partner, not a child. If someone appears on camera the test can be stopped with no refund. Arrange childcare the way you would for an in-person test.</li>' +
+      '<li><b>Have your photo ID.</b> Government issued, unexpired, and the name must match your GED account exactly.</li>' +
+      '<li><b>Check in 30 minutes early.</b> You photograph yourself, your ID, and your room, then wait for a live proctor.</li>' +
+      '<li><b>Use the on-screen whiteboard.</b> Online testers get a digital one instead of an erasable board. Try it with your mouse beforehand so it is not new.</li>' +
+      '</ul>' +
+      '<h2>If you test at a center</h2><ul><li>Bring your government photo ID and your confirmation. No ID, no test, no refund.</li><li>Everything else goes in a locker: phone, bag, watch, notes.</li><li>You get an erasable board and marker. Ask for a second one if you fill it.</li><li>You may bring your own TI-30XS calculator, though an on-screen one is provided.</li></ul>' +
+      '<h2>Pacing, whichever way you test</h2><table><tr><th>Subject</th><th>Time</th><th>Questions</th><th>Per question</th></tr><tr><td>Math</td><td>115 min</td><td>~46</td><td>~2.5 min</td></tr><tr><td>RLA</td><td>150 min</td><td>~50 + essay</td><td>~1.5 min, plus 45 for the essay</td></tr><tr><td>Science</td><td>90 min</td><td>~34</td><td>~2.5 min</td></tr><tr><td>Social Studies</td><td>70 min</td><td>~35</td><td>~2 min</td></tr></table>' +
+      '<p>Flag anything that passes three minutes, guess, and move on. There is no penalty for a wrong answer, so never leave a blank.</p>' +
+      '<h2>After</h2><ul><li>Most scores post to your GED.com account within a few hours. The essay takes longer.</li><li><b>145 or higher</b> finishes that subject for good. Book the next one while you still have momentum.</li><li><b>Below 145</b> is not the end. Your score report names the skills to work on, and the first two retakes at a center are $10. <a href="#/drill">Drill those skills here</a>, then go again.</li></ul>' +
+      '<div class="callout"><b>The morning of:</b> eat something with protein, start 30 minutes earlier than feels necessary, and remember you have already seen every kind of question on this test. The room is new. The questions are not.</div>' +
+      '</div><aside class="lesson-side"><div class="side-card"><h4>Quick links</h4><a href="https://ged.com" target="_blank" rel="noopener">GED.com: book and see scores</a><a href="https://ged.com/policies/minnesota/" target="_blank" rel="noopener">Minnesota rules and current prices</a><a href="#/formulas">Printable formula sheet</a><a href="#/drill">Drill your weak spots</a></div>' +
+      '<div class="side-card"><h4>Fee help</h4><p class="small muted" style="margin-bottom:8px">Ask these two directly what they can cover.</p><a href="tel:8002221990">Adult Literacy Hotline &middot; 800-222-1990</a><a href="tel:6126681863">Minneapolis Adult Ed &middot; 612-668-1863</a></div>' +
+      '<div class="side-card"><h4>Want a hand booking?</h4><p class="small muted" style="margin-bottom:10px">One 60-minute session covers setting up your account, picking a date, and a plan for the morning.</p><a href="#/quote" class="btn btn-primary btn-sm" style="display:inline-flex;border:0">Ask Aisha</a></div></aside></div></div>';
   }
-
   window.EXTRA = {plan:renderPlan, progress:renderProgress, essay:renderEssay, cards:renderCards, formulas:renderFormulas, testday:renderTestDay};
   window.LSL.stats = stats;
   // app.js routed before this file loaded; route again so deep links to these pages work on first load

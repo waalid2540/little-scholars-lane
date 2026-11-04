@@ -290,3 +290,47 @@ main#app{min-height:60vh}
   .feature:hover,.subject:hover,.tool:hover,.pring:hover,.topic:hover{transform:none}
   .score-ring.glow{animation:none}
 }
+
+/* ---------- readiness meter ---------- */
+.ready-meter{margin:18px 0 4px;padding:16px 18px;border-radius:16px;background:var(--ground);border:1px solid var(--line)}
+.rm-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.rm-score{font-family:"Cormorant Garamond",Georgia,serif;font-size:2.6rem;font-weight:600;line-height:.9;font-variant-numeric:tabular-nums;color:var(--ink)}
+.rm-band{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:5px 11px;border-radius:999px;background:var(--surface-2);color:var(--ink-soft)}
+.ready-meter.low .rm-band{background:var(--cinnamon-soft);color:var(--cinnamon)}
+.ready-meter.pass .rm-band{background:var(--honey);color:#3F3338}
+.ready-meter.college .rm-band,.ready-meter.credit .rm-band{background:var(--pine-soft);color:var(--pine)}
+.ready-meter.low .rm-score{color:var(--cinnamon)}
+.ready-meter.college .rm-score,.ready-meter.credit .rm-score{color:var(--pine)}
+.rm-scale{position:relative;height:10px;border-radius:5px;background:var(--surface-2);margin:22px 0 4px}
+.rm-fill{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:var(--cinnamon);opacity:.45}
+.ready-meter.college .rm-fill,.ready-meter.credit .rm-fill{background:var(--pine)}
+.rm-tick{position:absolute;top:-6px;bottom:-6px;width:2px;background:var(--ink-soft);opacity:.55}
+.rm-tick i{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-style:normal;font-size:.68rem;font-weight:600;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.rm-dot{position:absolute;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--surface);border:3px solid var(--cinnamon);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.ready-meter.college .rm-dot,.ready-meter.credit .rm-dot{border-color:var(--pine)}
+.rm-ends{display:flex;justify-content:space-between;font-size:.72rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.rm-plain{margin-top:10px;font-size:.92rem;color:var(--ink);line-height:1.5}
+
+/* ---------- drill call-to-action ---------- */
+.drill-cta{display:flex;flex-direction:column;gap:3px;margin-top:30px;padding:20px 24px;border-radius:20px;text-decoration:none;color:inherit;background:var(--cinnamon-soft);border:1px solid var(--cinnamon);transition:transform .35s cubic-bezier(.2,.7,.3,1),box-shadow .35s ease}
+.drill-cta:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(170,110,130,.18)}
+.drill-cta b{font-size:1.15rem;font-weight:600;color:var(--cinnamon)}
+.drill-cta span{font-size:.95rem;color:var(--ink)}
+
+/* ---------- printable study packets ---------- */
+@media print{
+  header,footer,.lesson-side,.lesson-nav,.no-print,.tryit .btn,.feature-grid,.stage-wrap,.hero-actions,.drill-cta{display:none!important}
+  body{background:#fff;color:#000;font-size:11pt}
+  .wrap{width:100%}
+  .lesson{display:block}
+  .lesson-body{max-width:100%}
+  .lesson-body h2{font-size:15pt;margin-top:18pt;page-break-after:avoid}
+  .page-head h1{font-size:22pt}
+  .example,.tryit,.callout,.card{border:1px solid #999;background:#fff;page-break-inside:avoid}
+  .tryit .reveal{display:block!important;border-top:1px dashed #999}
+  .subject,.topic{page-break-inside:avoid}
+  a[href^="#"]:after,a[href^="http"]:after{content:""}
+  table{page-break-inside:avoid}
+}
+
+#listen.on{background:var(--cinnamon);color:#fff;border-color:var(--cinnamon)}
