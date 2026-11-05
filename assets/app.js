@@ -754,7 +754,8 @@
      ['Essay workspace','Timed extended-response practice with a rubric.','#/essay','Tool','45 min'],
      ['Formula sheet','What the test gives you and what to memorize.','#/formulas','Tool','printable'],
      ['Test day','Costs, OnVUE rules, ID, and what to expect.','#/testday','Guide','8 min'],
-     ['Help','Common questions answered in plain language.','#/help','Guide','']
+     ['Help','Common questions answered in plain language.','#/help','Guide',''],
+     ['Terms & privacy','What the site costs, what happens to your data, and what is not promised.','#/terms','Guide','']
     ].forEach(function(x){ out.push({t:x[0], d:x[1], h:x[2], k:x[3], time:x[4]}); });
     return out;
   }
@@ -852,7 +853,7 @@
         ['What is the GED, in one sentence?','Four separate tests &mdash; math, language arts, science, and social studies &mdash; that together count as a high school diploma. You take them one at a time, in any order, and you only have to pass each one once.'],
         ['What score do I need?','<b>145</b> on each of the four. Scores run 100 to 200. Getting 165 or higher is called College Ready and can let a college skip placement testing, but 145 is all you need for the diploma itself.'],
         ['What does it cost?','The test is <b>$36 a subject</b> in Minnesota, and promo code <b>MNGED10</b> takes $10 off up to four subjects while state funding lasts. Retaking a subject at a test center is $10. <b>This website is free</b>, with no account and no card. Tutoring with Aisha is separate and hourly, starting at $20. <a href="#/testday">Full cost breakdown.</a>'],
-        ['Do I need an account on this site?','No. There is no signup at all. Everything &mdash; guides, quizzes, flashcards, your plan &mdash; works right away, and your scores save on this device only. If you switch between a phone and a laptop, <a href="#/transfer">copy your progress across with a code</a>.'],
+        ['Do I need an account on this site?','No. There is no signup at all. Everything &mdash; guides, quizzes, flashcards, your plan &mdash; works right away, and your scores save on this device only. If you switch between a phone and a laptop, <a href="#/transfer">copy your progress across with a code</a>. <a href="#/terms">Full terms and privacy.</a>'],
         ['How do I actually sign up for the test?','Make a free account at <a href="https://ged.com" target="_blank" rel="noopener">GED.com</a>, pick a subject, and choose a test center near you or the at-home online option. You must be 19, or 17 with a waiver if you are out of school. <a href="#/testday">What to expect on the day.</a>']
       ].map(function(f,i){ return '<details class="faq"'+(i===0?' open':'')+'><summary>'+f[0]+'</summary><div>'+f[1]+'</div></details>'; }).join('') + '</div>' +
       '<h2 style="font-size:1.6rem;margin:34px 0 14px">Still stuck? Ask below.</h2>' +

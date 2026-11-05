@@ -239,7 +239,65 @@
       '<div class="side-card"><h4>Fee help</h4><p class="small muted" style="margin-bottom:8px">Ask these two directly what they can cover.</p><a href="tel:8002221990">Adult Literacy Hotline &middot; 800-222-1990</a><a href="tel:6126681863">Minneapolis Adult Ed &middot; 612-668-1863</a></div>' +
       '<div class="side-card"><h4>Want a hand booking?</h4><p class="small muted" style="margin-bottom:10px">One 60-minute session covers setting up your account, picking a date, and a plan for the morning.</p><a href="#/quote" class="btn btn-primary btn-sm" style="display:inline-flex;border:0">Ask Aisha</a></div></aside></div></div>';
   }
-  window.EXTRA = {plan:renderPlan, progress:renderProgress, essay:renderEssay, cards:renderCards, formulas:renderFormulas, testday:renderTestDay};
+  function renderTerms(){
+    var upd = 'November 2026';
+    app.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">The small print</span><h1>Terms &amp; privacy</h1><p>Written in plain language, because small print that nobody can read protects nobody. Last updated ' + upd + '.</p></div>' +
+      '<div class="lesson"><div class="lesson-body">' +
+
+      '<div class="callout"><b>The short version.</b> Everything on this site is free and always will be. There is no account and no tracking, and your scores never leave your own device. Tutoring is a separate paid service you arrange directly with Aisha. This site is not connected to the official GED program, and nothing here guarantees you will pass.</div>' +
+
+      '<h2>Who runs this</h2><p>Ivory Study is run by Aisha, a private tutor in Minneapolis, Minnesota. It is a small independent business, not a school, not a testing centre, and not a government service. Questions about anything on this page go through <a href="#/quote">the contact form</a>.</p>' +
+
+      '<h2>What you are agreeing to</h2><p>By using this site you agree to the terms below. If you do not agree with them, please do not use it. These terms may change, and the date at the top tells you when they last did.</p>' +
+
+      '<h2>What the site costs</h2><ul>' +
+      '<li>Every study tool here is <b>free</b>: the guides, the practice questions, the drills, the flashcards, the planner, the essay workspace, all of it.</li>' +
+      '<li>There is no account, no trial, no subscription, and no card.</li>' +
+      '<li><b>Tutoring is separate.</b> It is a paid service, billed by the hour, arranged privately between you and Aisha. Paying for a session never unlocks anything on this site, because nothing here is locked.</li>' +
+      '<li>The <b>GED test itself</b> is paid to the testing service, not to Ivory Study. Nothing you pay Aisha goes toward your test fees.</li>' +
+      '</ul>' +
+
+      '<h2>Your data and your privacy</h2><ul>' +
+      '<li><b>Nothing you do here is sent to a server.</b> Your lessons completed, quiz scores, flashcards, study plan, essay drafts and streak are saved in your own browser, using a feature called local storage.</li>' +
+      '<li><b>There is no account and no sign-up</b>, so the site never learns your name, your email, or who you are.</li>' +
+      '<li><b>There are no analytics, no advertising, and no tracking cookies.</b> Nobody, Aisha included, can see what you studied or how you scored unless you choose to show them.</li>' +
+      '<li>Because the data lives in your browser, <b>clearing your site data erases it</b>, and it does not follow you to another device unless you move it yourself with <a href="#/transfer">a transfer code</a>.</li>' +
+      '<li>If you send a quote request, it opens <b>your own email app</b> with the answers filled in. You press send, and Aisha then holds that message the way anyone holds an email. She uses it to reply to you and nothing else, and she does not sell or share it.</li>' +
+      '<li>This site is hosted on GitHub Pages and loads fonts from Google Fonts. Those companies may log ordinary request information such as your IP address, as any website host does. That is outside Ivory Study\'s control.</li>' +
+      '</ul>' +
+
+      '<h2>About the practice material</h2><ul>' +
+      '<li>The questions here are <b>written by Aisha</b>. They are not real GED questions and they are not licensed from the testing service.</li>' +
+      '<li>The estimated score on the progress page is a <b>rough conversion from your practice here</b>, not an official score, and not a prediction. Only the official GED Ready test predicts your real result.</li>' +
+      '<li>The before-and-after score reports on the home page are <b>illustrations</b>, not real students.</li>' +
+      '<li>Facts about costs, rules and deadlines were checked when written, but <b>they change</b>. Confirm anything that matters on <a href="https://ged.com" target="_blank" rel="noopener">GED.com</a> before you pay or book.</li>' +
+      '</ul>' +
+
+      '<h2>No guarantee</h2><p>Studying here, or with Aisha, does not guarantee you will pass the GED or any part of it. The site is offered as it is, without any promise that it is complete, free of errors, or right for your situation. Ivory Study is not responsible for a result on a test, a fee you spend, or a decision you make based on something you read here. Check anything important against the official source.</p>' +
+
+      '<h2>Tutoring sessions</h2><ul>' +
+      '<li>The first 30 minutes are free, with no commitment on either side.</li>' +
+      '<li>Rates are quoted before a paid session starts. Payment is arranged directly with Aisha, never through this website.</li>' +
+      '<li>Please give as much notice as you can if you need to cancel or move a session. Aisha will do the same for you.</li>' +
+      '<li>Either of you can stop at any time, for any reason.</li>' +
+      '</ul>' +
+
+      '<h2>Age</h2><p>This site is built for adults studying for the GED. Minnesota\'s minimum testing age is 19, or 17 with a waiver if you are out of school. The site itself is open to anyone, but it is not designed or marketed for children, and it deliberately collects nothing that would identify one.</p>' +
+
+      '<h2>Links to other sites</h2><p>The resources page points to outside sites such as YouTube channels, practice tests, and public programs. They are recommendations, not partnerships. Ivory Study does not control them, is not paid by them, and is not responsible for their content, their prices, or what they do with your information once you are on their site.</p>' +
+
+      '<h2>Trademarks</h2><p>GED&reg; is a registered trademark of the American Council on Education and is administered by GED Testing Service LLC. <b>Ivory Study is not affiliated with, endorsed by, or approved by either organisation.</b> The name is used here only to describe what this site helps you study for.</p>' +
+
+      '<h2>The material on this site</h2><p>The lessons, practice questions, and flashcards were written for Ivory Study. You are welcome to use them, print them, and study from them for your own learning, and to share the link with anyone. Please do not republish them as your own or sell them.</p>' +
+
+      '<h2>Getting in touch</h2><p>Questions, corrections, or something on the site that looks wrong: <a href="#/quote">send a note here</a>. If a fact on this site is out of date, Aisha genuinely wants to hear about it.</p>' +
+
+      '<div class="callout"><b>One honest note.</b> This page was written in plain language by a tutor, not drafted by a lawyer, and it is not legal advice. It describes accurately how the site actually behaves. If Ivory Study grows, a professional should review it.</div>' +
+
+      '</div><aside class="lesson-side"><div class="side-card"><h4>In one line</h4><p class="small muted">Free, no account, no tracking, nothing leaves your device. Tutoring is paid and separate. Not affiliated with the official GED program.</p></div></aside></div></div>';
+  }
+
+  window.EXTRA = {terms:renderTerms, plan:renderPlan, progress:renderProgress, essay:renderEssay, cards:renderCards, formulas:renderFormulas, testday:renderTestDay};
   window.LSL.stats = stats;
   // app.js routed before this file loaded; route again so deep links to these pages work on first load
   var first = location.hash.replace(/^#\/?/, '').split('/')[0];
