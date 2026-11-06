@@ -70,6 +70,7 @@ main#app{min-height:60vh}
 .topic .done{font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--pine)}
 .topic .arrow{color:var(--s);font-size:1.3rem}
 .lesson{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:40px;align-items:start}
+.lesson-body,.lesson-side{min-width:0}
 @media (max-width:900px){.lesson{grid-template-columns:1fr}}
 .lesson-body{max-width:46rem}
 .lesson-body h2{font-size:2.1rem;margin:34px 0 12px}
@@ -393,3 +394,45 @@ textarea#xcode,textarea#icode{width:100%;resize:vertical}
 .diag-sub .diag-est{font-weight:600;color:var(--cinnamon)}
 
 @media print{.tabbar,.nav-search{display:none!important}}
+
+/* ---------------- phone ---------------- */
+@media (max-width:760px){
+  /* these live in app.css because it loads after base.css and would
+     otherwise win back its own smaller desktop values */
+  .btn{min-height:46px}
+  .btn-sm{min-height:44px}
+  .side-card a{padding:14px 0}
+  .mark-done input{width:24px;height:24px}
+  .btn-text{padding:10px 0;min-height:40px}
+  .faq summary{min-height:52px}
+
+  /* the question map was 26px squares: too small to hit while holding a phone */
+  .dot{width:38px;height:38px;border-radius:11px;font-size:.84rem}
+  .dots{gap:8px}
+  .q-card{padding:22px 18px}
+  .choice{padding:16px 14px}
+  .q-foot{gap:14px}
+  .q-foot .btn{flex:1}
+
+  .quiz-top{gap:10px}
+  .timer{font-size:1.05rem;padding:8px 16px}
+
+  /* stacked, the essay passages scroll on their own so the writing box stays reachable */
+  .essay-read .passage{max-height:240px}
+  #etext{min-height:300px}
+  .essay-foot .btn{width:100%}
+
+  .fc-actions .btn{flex:1}
+  .sub-foot{gap:10px}
+  .prog-links{gap:20px;padding-top:14px}
+  .prog-links a{padding:6px 0}
+  .pstrip{padding:22px 18px}
+  .week li{padding:10px 8px}
+  .week li input{width:24px;height:24px}
+  .hit{padding:18px 16px}
+  .searchbox input{font-size:16px;padding:15px 18px}
+  .res-filters{gap:10px}
+  .ready-meter{padding:18px 16px}
+  .rm-scale{height:12px}
+  .rm-dot{width:22px;height:22px;margin:-11px 0 0 -11px}
+}

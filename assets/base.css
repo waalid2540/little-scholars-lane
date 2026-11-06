@@ -21,6 +21,7 @@
   html{scroll-behavior:smooth}
   @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{animation:none!important;transition:none!important} }
   body{
+    -webkit-text-size-adjust:100%;
     margin:0;background:var(--ground);color:var(--ink);
     font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
     font-size:18px;line-height:1.68;
@@ -37,12 +38,14 @@
   .nav-links{display:flex;gap:26px;font-weight:500;font-size:.92rem;letter-spacing:.02em}
   .nav-links a{text-decoration:none;color:var(--ink-soft)}
   .nav-links a:hover{color:var(--pine)}
-  @media (max-width:640px){
-    .nav{flex-wrap:wrap;row-gap:12px;padding:14px 0}
+  @media (max-width:760px){
+    /* the sticky bottom bar is the navigation on a phone. A second,
+       half-visible row of the same links above it just read as broken. */
+    .nav{padding:14px 0}
+    .nav-links{display:none}
     .brand{font-size:2.05rem;white-space:nowrap}
     .brand svg{width:30px;height:30px}
-    .nav .btn{margin-left:auto;padding:9px 14px;font-size:.85rem}
-    .nav-links{order:3;width:100%;justify-content:space-between;gap:14px;font-size:.9rem;overflow-x:auto;white-space:nowrap;padding-bottom:4px}
+    .nav .btn{padding:11px 18px;font-size:.9rem;min-height:0}
   }
 
   .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:999px;font-weight:600;text-decoration:none;border:0;cursor:pointer;font-family:inherit;font-size:1rem;transition:transform .15s ease,box-shadow .15s ease}
@@ -245,4 +248,42 @@
     .tabbar a.on{color:var(--cinnamon)}
     body{padding-bottom:78px}
     .nav-search{display:none}
+  }
+
+  /* ---------------- phone ---------------- */
+  @media (max-width:760px){
+    /* iOS zooms the whole page when a focused control is under 16px.
+       Every input here inherited a 0.86rem label, so the layout jumped
+       on every tap. 16px stops that. */
+    input,select,textarea{font-size:16px;padding:14px 15px}
+    input[type="date"],input[type="time"]{min-height:52px}
+    textarea{min-height:120px}
+
+    /* thumbs, not cursors: the guideline is about 44px */
+    .btn{padding:15px 24px}
+    .btn-sm{padding:12px 18px;font-size:.95rem}
+    .chip{min-height:44px;padding:11px 18px;font-size:.95rem}
+    .opt{padding:16px 18px}
+    .slot{padding:16px 10px}
+    .mark-done input{width:24px;height:24px}
+    .faq summary{padding:18px 0}
+
+    /* a lesson's topic list is navigation once it drops below the text */
+    .side-card a{padding:13px 0;font-size:1rem}
+    .side-card{padding:20px 22px}
+
+    /* answer cards need room for a long definition. A definite ratio, not
+       auto: the flipped face is absolutely positioned and would otherwise
+       have no height to size against. */
+    .fc{aspect-ratio:4/3}
+    .fc-face{padding:24px 20px}
+    .fc-back .fc-text{font-size:1rem}
+
+    /* a wide table scrolls inside its own box; max-width keeps that box
+       from widening the page itself */
+    .lesson-body table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .lesson-body table td,.lesson-body table th{min-width:5.5rem}
+
+    /* stop the grey flash on tap, keep real focus rings */
+    a,button,summary,.slot,.chip,.opt{-webkit-tap-highlight-color:rgba(212,96,124,.12)}
   }
